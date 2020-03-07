@@ -37,22 +37,8 @@ namespace caelus {
         glm::mat4 pv_matrix;
     };
 
-    struct GameObjectInfo {
-        glm::vec2 position, size, velocity;
-        glm::vec3 color;
-        float rotation;
-        bool is_solid;
-        bool destroyed;
-
-        void (*update)(GameObjectInfo&);
-    };
-
     struct Instance {
         glm::mat4 model;
-    };
-
-    struct alignas(16) ColorInstance {
-        glm::vec3 color;
     };
 } // namespace game
 

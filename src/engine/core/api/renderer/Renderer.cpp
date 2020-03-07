@@ -2,6 +2,7 @@
 #include <engine/core/api/VulkanContext.hpp>
 #include <engine/core/api/CommandBuffer.hpp>
 #include <engine/core/api/VertexBuffer.hpp>
+#include <engine/core/components/Mesh.hpp>
 #include <engine/core/api/Pipeline.hpp>
 #include <engine/core/Globals.hpp>
 #include <engine/Constants.hpp>
@@ -30,7 +31,7 @@ namespace caelus::core::api {
         vertex_buffers[1] = api::make_vertex_buffer(components::generate_quad_geometry(), ctx);
     }
 
-    void Renderer::acquire_frame() {
+    u32 Renderer::acquire_frame() {
         image_index = ctx.device.logical.acquireNextImageKHR(ctx.swapchain.handle, -1, image_available[current_frame], nullptr, ctx.dispatcher).value;
 
         if (!frames_in_flight[current_frame]) {
@@ -42,9 +43,11 @@ namespace caelus::core::api {
         }
 
         ctx.device.logical.waitForFences(frames_in_flight[current_frame], true, -1, ctx.dispatcher);
+
+        return current_frame;
     }
 
-    void Renderer::build() {
+    void Renderer::start() {
         auto& command_buffer = command_buffers[image_index];
 
         vk::CommandBufferBeginInfo begin_info{}; {
@@ -53,12 +56,18 @@ namespace caelus::core::api {
 
         command_buffer.begin(begin_info, ctx.dispatcher);
 
+        std::array<vk::ClearValue, 2> clear_values{}; {
+            clear_values[0].color = vk::ClearColorValue{ std::array { 0.02f, 0.02f, 0.02f, 0.0f } };
+
+            clear_values[1].depthStencil = { { 1.0f, 0 } };
+        }
+
         vk::RenderPassBeginInfo render_pass_begin_info{}; {
             render_pass_begin_info.renderArea.extent = ctx.swapchain.extent;
             render_pass_begin_info.framebuffer = ctx.default_framebuffers[image_index];
             render_pass_begin_info.renderPass = ctx.default_render_pass;
-            render_pass_begin_info.clearValueCount = graph.clear_values.size();
-            render_pass_begin_info.pClearValues = graph.clear_values.data();
+            render_pass_begin_info.clearValueCount = clear_values.size();
+            render_pass_begin_info.pClearValues = clear_values.data();
         }
 
         vk::Viewport viewport{}; {
@@ -79,22 +88,21 @@ namespace caelus::core::api {
         command_buffer.setScissor(0, scissor, ctx.dispatcher);
 
         command_buffer.beginRenderPass(render_pass_begin_info, vk::SubpassContents::eInline, ctx.dispatcher);
+    }
 
-        // Start mesh pass
-        command_buffer.bindPipeline(vk::PipelineBindPoint::eGraphics, graph.pipelines[meta::PipelineType::MeshGeneric].handle, ctx.dispatcher);
+    void Renderer::draw() {
 
-        for (auto& object : graph.game_objects) {
-            command_buffer.bindVertexBuffers(0, vertex_buffers[object.vertex_buffer_id].buffer.handle, static_cast<vk::DeviceSize>(0), ctx.dispatcher);
-            command_buffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, graph.layouts[meta::PipelineLayoutType::MeshGeneric].pipeline, 0, object.descriptor_set[current_frame], nullptr, ctx.dispatcher);
-            command_buffer.draw(object.vertex_count, object.instances.size(), 0, 0, ctx.dispatcher);
-        }
+    }
+
+    void Renderer::end() {
+        auto& command_buffer = command_buffers[image_index];
 
         command_buffer.endRenderPass(ctx.dispatcher);
 
         command_buffer.end(ctx.dispatcher);
     }
 
-    void Renderer::draw() {
+    void Renderer::submit() {
         vk::PipelineStageFlags wait_mask{ vk::PipelineStageFlagBits::eColorAttachmentOutput };
         vk::SubmitInfo submit_info{}; {
             submit_info.commandBufferCount = 1;

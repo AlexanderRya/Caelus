@@ -4,7 +4,7 @@
 #include <chrono>
 #include <string>
 
-namespace game::util {
+namespace caelus::util {
 #if _WIN32
     HMODULE load_module(LPCSTR name) {
         return LoadLibraryA(name);
@@ -37,4 +37,4 @@ namespace game::util {
 
         return buf;
     }
-} // namespace game::util
+} // namespace caelus::util

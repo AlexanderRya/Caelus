@@ -20,7 +20,7 @@ namespace caelus::core::api {
         const VulkanContext& ctx;
 
         // Drawing stuff
-        std::unordered_map<u64, api::VertexBuffer> vertex_buffers;
+        std::unordered_map<u64, api::Buffer> vertex_buffers;
 
         u32 frames_rendered{};
         u32 image_index{};
@@ -32,9 +32,11 @@ namespace caelus::core::api {
         void init_rendering_data();
 
         // Drawing
-        void acquire_frame();
-        void build();
+        u32 acquire_frame();
+        void start();
+        void end();
         void draw();
+        void submit();
 
     };
 } // namespace caelus::core::api

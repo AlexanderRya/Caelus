@@ -25,7 +25,7 @@ namespace caelus::core::components {
         glm::vec3 cam_right = glm::vec3();
         glm::vec3 cam_wup = glm::vec3(0.0f, 1.0f, 0.0f);
 
-        Camera();
+        Camera() noexcept;
         void move(const Window&);
         [[nodiscard]] glm::mat4 get_view_mat() const;
         void process(double xoffset, double yoffset);

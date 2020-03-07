@@ -3,7 +3,7 @@
 
 int main() {
     using namespace caelus::core;
-    Application game;
-    game.run();
+    Application app;
+    app.run();
     return 0;
 }

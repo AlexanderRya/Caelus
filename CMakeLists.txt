@@ -25,7 +25,7 @@ set(STB_HEADERS
         external/stb/stb_image.h)
 
 set(STB_SOURCES
-        src/engine/STBImpl.cpp)
+        src/engine/STB_Impl.cpp)
 
 set(VMA_HEADERS
         external/VulkanMemoryAllocator/src/vk_mem_alloc.h)
@@ -87,7 +87,7 @@ set(CAELUS_SOURCES
         src/engine/core/components/Camera.cpp
         src/engine/core/api/Image.cpp
         src/engine/core/components/Texture.cpp
-        src/engine/core/api/Sampler.cpp)
+        src/engine/core/api/Sampler.cpp src/engine/core/components/Mesh.cpp)
 
 add_executable(Caelus
         ${CAELUS_HEADERS}

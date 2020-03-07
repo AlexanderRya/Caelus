@@ -3,7 +3,7 @@
 #include <engine/core/Window.hpp>
 
 namespace caelus::core::components {
-    Camera::Camera()
+    Camera::Camera() noexcept
     : yaw(-90.0f),
       pitch(0.0f) {
         update();
