@@ -1,0 +1,10 @@
+# Project exclude paths
+/cmake-build-debug/
+/cmake-build-release/
+/dump/
+.idea
+.idea/.gitignore
+.idea/Caelus.iml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
