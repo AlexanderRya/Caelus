@@ -31,13 +31,13 @@ namespace caelus::core::api {
     PipelineLayout make_generic_pipeline_layout(const VulkanContext& ctx) {
         PipelineLayout layout;
 
-        std::array<vk::DescriptorSetLayoutBinding, 4> layout_bindings{}; {
+        std::array<vk::DescriptorSetLayoutBinding, 1> layout_bindings{}; {
             layout_bindings[0].descriptorCount = 1;
             layout_bindings[0].descriptorType = vk::DescriptorType::eUniformBuffer;
             layout_bindings[0].binding = static_cast<u32>(meta::PipelineBinding::Camera);
             layout_bindings[0].stageFlags = vk::ShaderStageFlagBits::eVertex;
 
-            layout_bindings[1].descriptorCount = 1;
+            /*layout_bindings[1].descriptorCount = 1;
             layout_bindings[1].descriptorType = vk::DescriptorType::eStorageBuffer;
             layout_bindings[1].binding = static_cast<u32>(meta::PipelineBinding::Instance);
             layout_bindings[1].stageFlags = vk::ShaderStageFlagBits::eVertex;
@@ -50,7 +50,7 @@ namespace caelus::core::api {
             layout_bindings[3].descriptorCount = 1;
             layout_bindings[3].descriptorType = vk::DescriptorType::eCombinedImageSampler;
             layout_bindings[3].binding = static_cast<u32>(meta::PipelineBinding::DefaultSampler);
-            layout_bindings[3].stageFlags = vk::ShaderStageFlagBits::eFragment;
+            layout_bindings[3].stageFlags = vk::ShaderStageFlagBits::eFragment;*/
         }
 
         vk::DescriptorSetLayoutCreateInfo set_layout_create_info{}; {

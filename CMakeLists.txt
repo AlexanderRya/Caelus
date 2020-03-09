@@ -5,11 +5,13 @@ find_package(Vulkan REQUIRED)
 
 add_subdirectory(external/glfw)
 add_subdirectory(external/glm)
+add_subdirectory(external/entt)
 
 include_directories(Caelus
         include
         external/stb
         external/glm
+        external/entt/src
         external/glfw/include
         external/VulkanMemoryAllocator/src
         ${Vulkan_INCLUDE_DIRS})
@@ -60,7 +62,7 @@ set(CAELUS_HEADERS
         include/engine/core/components/Texture.hpp
         include/engine/core/api/Image.hpp
         include/engine/core/api/Sampler.hpp
-        include/engine/core/components/Mesh.hpp)
+        include/engine/core/components/Mesh.hpp include/engine/core/components/MeshRenderer.hpp)
 
 set(CAELUS_SOURCES
         ${STB_SOURCES}
@@ -87,7 +89,8 @@ set(CAELUS_SOURCES
         src/engine/core/components/Camera.cpp
         src/engine/core/api/Image.cpp
         src/engine/core/components/Texture.cpp
-        src/engine/core/api/Sampler.cpp src/engine/core/components/Mesh.cpp)
+        src/engine/core/api/Sampler.cpp
+        src/engine/core/components/Mesh.cpp)
 
 add_executable(Caelus
         ${CAELUS_HEADERS}

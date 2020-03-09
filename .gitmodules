@@ -10,3 +10,6 @@
 [submodule "external/stb"]
 	path = external/stb
 	url = https://github.com/nothings/stb
+[submodule "external/entt"]
+	path = external/entt
+	url = https://github.com/skypjack/entt.git

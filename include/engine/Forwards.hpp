@@ -30,7 +30,6 @@ namespace caelus::core::api {
 } // namespace caelus::core::api
 
 namespace caelus::core::api {
-    struct VertexBuffer;
     class MappedBuffer;
     class SingleMappedBuffer;
 } // namespace caelus::core::api

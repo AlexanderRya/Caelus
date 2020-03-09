@@ -1,6 +1,7 @@
 #include <engine/core/components/Texture.hpp>
 #include <engine/core/api/VulkanContext.hpp>
 #include <engine/core/api/Buffer.hpp>
+#include <engine/Constants.hpp>
 #include <engine/Logger.hpp>
 
 #include <stb_image.h>
@@ -8,8 +9,8 @@
 #include <fstream>
 
 namespace caelus::core::components {
-    Texture::Texture(const api::VulkanContext& ctx, const vk::Sampler sampler)
-        : sampler(sampler),
+    Texture::Texture(const api::VulkanContext& ctx, const meta::SamplerType type)
+        : type(type),
           ctx(ctx) {
         stbi_set_flip_vertically_on_load(true);
     }
@@ -72,7 +73,11 @@ namespace caelus::core::components {
                      ", channels: ", channels);
     }
 
-    vk::DescriptorImageInfo Texture::get_info() const {
+    meta::SamplerType Texture::get_type() const {
+        return type;
+    }
+
+    vk::DescriptorImageInfo Texture::get_info(const vk::Sampler sampler) const {
         vk::DescriptorImageInfo info{}; {
             info.sampler = sampler;
             info.imageView = image_view;

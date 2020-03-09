@@ -1,9 +1,13 @@
+#include <engine/core/components/MeshRenderer.hpp>
 #include <engine/core/api/renderer/Renderer.hpp>
 #include <engine/core/api/VulkanContext.hpp>
+#include <engine/core/api/DescriptorSet.hpp>
 #include <engine/core/api/CommandBuffer.hpp>
+#include <engine/core/api/MappedBuffer.hpp>
 #include <engine/core/api/VertexBuffer.hpp>
 #include <engine/core/components/Mesh.hpp>
 #include <engine/core/api/Pipeline.hpp>
+#include <engine/core/api/Sampler.hpp>
 #include <engine/core/Globals.hpp>
 #include <engine/Constants.hpp>
 #include <engine/Logger.hpp>
@@ -24,11 +28,57 @@ namespace caelus::core::api {
         }
 
         frames_in_flight.resize(meta::frames_in_flight, nullptr);
+
+        vertex_buffers.emplace_back(api::make_vertex_buffer(components::generate_triangle_geometry(), ctx));
+        vertex_buffers.emplace_back(api::make_vertex_buffer(components::generate_quad_geometry(), ctx));
+
+        layouts[meta::PipelineLayoutType::MeshGeneric] = api::make_generic_pipeline_layout(context);
+
+        samplers[meta::SamplerType::Default] = api::make_default_sampler(context);
+
+        api::Pipeline::CreateInfo create_info{}; {
+            create_info.ctx = &context;
+            create_info.vertex_path = "../resources/shaders/generic.vert.spv";
+            create_info.fragment_path = "../resources/shaders/generic.frag.spv";
+            create_info.layout = layouts[meta::PipelineLayoutType::MeshGeneric];
+        }
+
+        pipelines[meta::PipelineType::MeshGeneric] = api::make_generic_pipeline(create_info);
     }
 
-    void Renderer::init_rendering_data() {
-        vertex_buffers[0] = api::make_vertex_buffer(components::generate_triangle_geometry(), ctx);
-        vertex_buffers[1] = api::make_vertex_buffer(components::generate_quad_geometry(), ctx);
+    void Renderer::build(entt::registry& registry) {
+        /* Camera buffer */ {
+            api::MappedBuffer::CreateInfo buffer_info{}; {
+                buffer_info.ctx = &ctx;
+                buffer_info.type_size = sizeof(CameraData);
+                buffer_info.buffer_usage = vk::BufferUsageFlagBits::eUniformBuffer;
+            }
+
+            mapped_buffers.emplace_back().create(buffer_info);
+        }
+
+        auto view = registry.view<components::Mesh>();
+
+        for (auto& entity : view) {
+            api::DescriptorSet::CreateInfo create_info{}; {
+                create_info.ctx = &ctx;
+                create_info.layout = layouts[meta::PipelineLayoutType::MeshGeneric].set;
+            }
+
+            components::MeshRenderer component{}; {
+                component.descriptor_set.create(create_info);
+            }
+
+            api::DescriptorSet::WriteInfo write_info{}; {
+                write_info.buffer_info = mapped_buffers[0].get_info();
+                write_info.type = vk::DescriptorType::eUniformBuffer;
+                write_info.binding = static_cast<u32>(meta::PipelineBinding::Camera);
+            }
+
+            component.descriptor_set.write(write_info);
+
+            registry.assign<components::MeshRenderer>(entity, component);
+        }
     }
 
     u32 Renderer::acquire_frame() {
@@ -90,8 +140,27 @@ namespace caelus::core::api {
         command_buffer.beginRenderPass(render_pass_begin_info, vk::SubpassContents::eInline, ctx.dispatcher);
     }
 
-    void Renderer::draw() {
+    void Renderer::draw(entt::registry& registry) {
+        auto& command_buffer = command_buffers[image_index];
+        auto view = registry.view<components::Mesh, components::MeshRenderer>();
 
+        update_camera();
+
+        command_buffer.bindPipeline(vk::PipelineBindPoint::eGraphics, pipelines[meta::PipelineType::MeshGeneric].handle, ctx.dispatcher);
+
+        for (const auto& entity : view) {
+            auto [mesh, mesh_renderer] = view.get<components::Mesh, components::MeshRenderer>(entity);
+
+            command_buffer.bindVertexBuffers(0, vertex_buffers[mesh.vertex_buffer_id].handle, static_cast<vk::DeviceSize>(0), ctx.dispatcher);
+            command_buffer.bindDescriptorSets(
+                vk::PipelineBindPoint::eGraphics,
+                layouts[meta::PipelineLayoutType::MeshGeneric].pipeline,
+                0,
+                mesh_renderer.descriptor_set[current_frame],
+                nullptr,
+                ctx.dispatcher);
+            command_buffer.draw(mesh.vertex_count, 1, 0, 0, ctx.dispatcher);
+        }
     }
 
     void Renderer::end() {
@@ -129,5 +198,12 @@ namespace caelus::core::api {
 
         ++frames_rendered;
         current_frame = (current_frame + 1) % meta::frames_in_flight;
+    }
+
+    void Renderer::update_camera() {
+        CameraData data{};
+        data.pv_matrix = glm::mat4(1.0f);
+
+        mapped_buffers[0][current_frame].write(&data, 1);
     }
 } // namespace caelus::core::api
