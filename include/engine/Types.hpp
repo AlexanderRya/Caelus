@@ -33,10 +33,6 @@ namespace caelus {
         glm::vec2 tx_coords;
     };
 
-    struct CameraData {
-        glm::mat4 pv_matrix;
-    };
-
     struct Instance {
         glm::mat4 model;
     };

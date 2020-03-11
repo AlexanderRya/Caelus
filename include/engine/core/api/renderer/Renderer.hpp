@@ -28,8 +28,9 @@ namespace caelus::core::api {
 
         // Drawing stuff
         std::vector<api::Buffer> vertex_buffers;
-        std::vector<api::DescriptorSet> descriptor_sets;
-        std::vector<api::MappedBuffer> mapped_buffers;
+
+        entt::entity camera_entity;
+        std::vector<entt::entity> objects;
 
         std::unordered_map<meta::PipelineType, api::Pipeline> pipelines;
         std::unordered_map<meta::PipelineLayoutType, api::PipelineLayout> layouts;
@@ -39,7 +40,7 @@ namespace caelus::core::api {
         u32 image_index{};
         u32 current_frame{};
 
-        void update_camera();
+        void update_camera(entt::registry&);
     public:
         explicit Renderer(const VulkanContext&);
 

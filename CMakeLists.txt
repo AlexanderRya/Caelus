@@ -62,7 +62,9 @@ set(CAELUS_HEADERS
         include/engine/core/components/Texture.hpp
         include/engine/core/api/Image.hpp
         include/engine/core/api/Sampler.hpp
-        include/engine/core/components/Mesh.hpp include/engine/core/components/MeshRenderer.hpp)
+        include/engine/core/components/Mesh.hpp
+        include/engine/core/components/MeshRenderer.hpp
+        include/engine/core/components/CameraData.hpp)
 
 set(CAELUS_SOURCES
         ${STB_SOURCES}

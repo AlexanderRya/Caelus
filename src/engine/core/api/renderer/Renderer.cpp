@@ -1,5 +1,6 @@
 #include <engine/core/components/MeshRenderer.hpp>
 #include <engine/core/api/renderer/Renderer.hpp>
+#include <engine/core/components/CameraData.hpp>
 #include <engine/core/api/VulkanContext.hpp>
 #include <engine/core/api/DescriptorSet.hpp>
 #include <engine/core/api/CommandBuffer.hpp>
@@ -47,37 +48,42 @@ namespace caelus::core::api {
     }
 
     void Renderer::build(entt::registry& registry) {
+        camera_entity = registry.create();
+
         /* Camera buffer */ {
             api::MappedBuffer::CreateInfo buffer_info{}; {
                 buffer_info.ctx = &ctx;
-                buffer_info.type_size = sizeof(CameraData);
+                buffer_info.type_size = sizeof(glm::mat4);
                 buffer_info.buffer_usage = vk::BufferUsageFlagBits::eUniformBuffer;
             }
 
-            mapped_buffers.emplace_back().create(buffer_info);
+            components::CameraData camera_data{}; {
+                camera_data.buffer.create(buffer_info);
+            }
+
+            registry.assign<components::CameraData>(camera_entity, std::move(camera_data));
         }
 
-        auto view = registry.view<components::Mesh>();
+        auto mesh_view = registry.view<components::Mesh, components::MeshRenderer>();
+        auto camera_buffer_info = registry.get<components::CameraData>(camera_entity).buffer.get_info();
 
-        for (auto& entity : view) {
+        for (auto& entity : mesh_view) {
+            auto& mesh_renderer = mesh_view.get<components::MeshRenderer>(entity);
+
             api::DescriptorSet::CreateInfo create_info{}; {
                 create_info.ctx = &ctx;
                 create_info.layout = layouts[meta::PipelineLayoutType::MeshGeneric].set;
             }
 
-            components::MeshRenderer component{}; {
-                component.descriptor_set.create(create_info);
-            }
+            mesh_renderer.descriptor_set.create(create_info);
 
             api::DescriptorSet::WriteInfo write_info{}; {
-                write_info.buffer_info = mapped_buffers[0].get_info();
+                write_info.buffer_info = camera_buffer_info;
                 write_info.type = vk::DescriptorType::eUniformBuffer;
                 write_info.binding = static_cast<u32>(meta::PipelineBinding::Camera);
             }
 
-            component.descriptor_set.write(write_info);
-
-            registry.assign<components::MeshRenderer>(entity, component);
+            mesh_renderer.descriptor_set.write(write_info);
         }
     }
 
@@ -108,7 +114,6 @@ namespace caelus::core::api {
 
         std::array<vk::ClearValue, 2> clear_values{}; {
             clear_values[0].color = vk::ClearColorValue{ std::array { 0.02f, 0.02f, 0.02f, 0.0f } };
-
             clear_values[1].depthStencil = { { 1.0f, 0 } };
         }
 
@@ -144,14 +149,14 @@ namespace caelus::core::api {
         auto& command_buffer = command_buffers[image_index];
         auto view = registry.view<components::Mesh, components::MeshRenderer>();
 
-        update_camera();
+        update_camera(registry);
 
         command_buffer.bindPipeline(vk::PipelineBindPoint::eGraphics, pipelines[meta::PipelineType::MeshGeneric].handle, ctx.dispatcher);
 
         for (const auto& entity : view) {
             auto [mesh, mesh_renderer] = view.get<components::Mesh, components::MeshRenderer>(entity);
 
-            command_buffer.bindVertexBuffers(0, vertex_buffers[mesh.vertex_buffer_id].handle, static_cast<vk::DeviceSize>(0), ctx.dispatcher);
+            command_buffer.bindVertexBuffers(0, vertex_buffers[mesh.vertex_buffer_idx].handle, static_cast<vk::DeviceSize>(0), ctx.dispatcher);
             command_buffer.bindDescriptorSets(
                 vk::PipelineBindPoint::eGraphics,
                 layouts[meta::PipelineLayoutType::MeshGeneric].pipeline,
@@ -200,10 +205,11 @@ namespace caelus::core::api {
         current_frame = (current_frame + 1) % meta::frames_in_flight;
     }
 
-    void Renderer::update_camera() {
-        CameraData data{};
-        data.pv_matrix = glm::mat4(1.0f);
+    void Renderer::update_camera(entt::registry& registry) {
+        auto& data = registry.get<components::CameraData>(camera_entity);
 
-        mapped_buffers[0][current_frame].write(&data, 1);
+        glm::mat4 pv_matrix = glm::mat4(1.0f);
+
+        data.buffer[current_frame].write(&pv_matrix, 1);
     }
 } // namespace caelus::core::api

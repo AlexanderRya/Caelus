@@ -7,7 +7,7 @@
 
 namespace caelus::core::components {
     struct Mesh {
-        u64 vertex_buffer_id;
+        usize vertex_buffer_idx;
         u64 vertex_count;
     };
 

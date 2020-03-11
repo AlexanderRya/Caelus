@@ -1,3 +1,5 @@
+#include <engine/core/components/MeshRenderer.hpp>
+#include <engine/core/components/CameraData.hpp>
 #include <engine/core/components/Texture.hpp>
 #include <engine/core/components/Camera.hpp>
 #include <engine/core/components/Mesh.hpp>
@@ -21,6 +23,7 @@ namespace caelus::core {
 
         auto triangle = registry.create(); {
             registry.assign<components::Mesh>(triangle, components::Mesh{ 0, 3 });
+            registry.assign<components::MeshRenderer>(triangle);
         }
 
         renderer.build(registry);

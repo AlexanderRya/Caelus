@@ -7,6 +7,7 @@
 namespace caelus::core::components {
     struct MeshRenderer {
         api::DescriptorSet descriptor_set{};
+
         api::MappedBuffer instance_buffer{};
     };
 } // namespace caelus::core::components
