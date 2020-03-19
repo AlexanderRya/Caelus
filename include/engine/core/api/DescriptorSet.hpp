@@ -7,15 +7,16 @@
 #include <vulkan/vulkan.hpp>
 
 namespace caelus::core::api {
+    class SingleDescriptorSet;
+
     class DescriptorSet {
-        std::vector<vk::DescriptorSet> descriptor_sets{};
+        std::vector<SingleDescriptorSet> descriptor_sets{};
         const api::VulkanContext* ctx{};
     public:
         struct WriteInfo {
             u64 binding{};
             vk::DescriptorType type{};
             std::vector<vk::DescriptorBufferInfo> buffer_info{};
-            vk::DescriptorImageInfo image_info{};
         };
 
         struct CreateInfo {
@@ -30,9 +31,19 @@ namespace caelus::core::api {
         void write(const std::vector<WriteInfo>&);
         void write(const WriteInfo&);
 
-        void write_at(const usize, const WriteInfo&);
+        [[nodiscard]] SingleDescriptorSet operator [](const usize) const;
+    };
 
-        [[nodiscard]] vk::DescriptorSet operator [](const usize) const;
+    class SingleDescriptorSet {
+        vk::DescriptorSet descriptor_set{};
+        const api::VulkanContext* ctx{};
+    public:
+        void create(const DescriptorSet::CreateInfo&);
+
+        void write(const std::vector<DescriptorSet::WriteInfo>&);
+        void write(const DescriptorSet::WriteInfo&);
+
+        [[nodiscard]] vk::DescriptorSet handle() const;
     };
 } // namespace caelus::core::api
 

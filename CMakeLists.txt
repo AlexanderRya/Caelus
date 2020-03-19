@@ -63,8 +63,8 @@ set(CAELUS_HEADERS
         include/engine/core/api/Image.hpp
         include/engine/core/api/Sampler.hpp
         include/engine/core/components/Mesh.hpp
-        include/engine/core/components/MeshRenderer.hpp
-        include/engine/core/components/CameraData.hpp)
+        include/engine/core/api/renderer/RenderGraph.hpp
+        include/engine/core/components/Transform.hpp)
 
 set(CAELUS_SOURCES
         ${STB_SOURCES}
@@ -99,7 +99,7 @@ add_executable(Caelus
         ${CAELUS_SOURCES})
 
 if (UNIX)
-    target_compile_options(Caelus PRIVATE -std=c++20 -O3 -pedantic -pedantic-errors -m64 -Wall -Wextra -Werror -Wno-c99-extensions -Wno-shadow)
+    target_compile_options(Caelus PRIVATE -std=c++20 -O3 -pedantic -pedantic-errors -m64 -Wall -Wextra -Werror -Wno-c99-extensions -Wno-shadow -Wno-deprecated-declarations)
 endif()
 
 if (WIN32)

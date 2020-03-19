@@ -1,8 +1,10 @@
 #ifndef CAELUS_CONSTANTS_HPP
 #define CAELUS_CONSTANTS_HPP
 
+#include <engine/Types.hpp>
+
 namespace caelus::meta {
-    constexpr static inline usize frames_in_flight = 2;
+    constexpr inline usize frames_in_flight = 2;
 
     enum class PipelineBinding : u32 {
         Camera = 0,

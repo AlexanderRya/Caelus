@@ -47,6 +47,7 @@ namespace caelus::core::api {
 
         [[nodiscard]] vk::DescriptorBufferInfo get_info() const;
         [[nodiscard]] usize size() const;
+        [[nodiscard]] vk::Buffer handle() const;
     };
 } // namespace caelus::core::api
 

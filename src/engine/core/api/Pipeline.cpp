@@ -1,10 +1,10 @@
 #include <engine/core/api/VulkanContext.hpp>
 #include <engine/core/api/Pipeline.hpp>
+#include <engine/Constants.hpp>
 #include <engine/Logger.hpp>
 #include <engine/Types.hpp>
 
 #include <fstream>
-#include <engine/Constants.hpp>
 
 namespace caelus::core::api {
     [[nodiscard]] static inline vk::ShaderModule load_module(const VulkanContext* ctx, const std::filesystem::path& path) {
@@ -32,17 +32,17 @@ namespace caelus::core::api {
         PipelineLayout layout;
 
         std::array<vk::DescriptorSetLayoutBinding, 1> layout_bindings{}; {
-            layout_bindings[0].descriptorCount = 1;
+            /*layout_bindings[0].descriptorCount = 1;
             layout_bindings[0].descriptorType = vk::DescriptorType::eUniformBuffer;
             layout_bindings[0].binding = static_cast<u32>(meta::PipelineBinding::Camera);
+            layout_bindings[0].stageFlags = vk::ShaderStageFlagBits::eVertex;*/
+
+            layout_bindings[0].descriptorCount = 1;
+            layout_bindings[0].descriptorType = vk::DescriptorType::eStorageBuffer;
+            layout_bindings[0].binding = static_cast<u32>(meta::PipelineBinding::Instance);
             layout_bindings[0].stageFlags = vk::ShaderStageFlagBits::eVertex;
 
-            /*layout_bindings[1].descriptorCount = 1;
-            layout_bindings[1].descriptorType = vk::DescriptorType::eStorageBuffer;
-            layout_bindings[1].binding = static_cast<u32>(meta::PipelineBinding::Instance);
-            layout_bindings[1].stageFlags = vk::ShaderStageFlagBits::eVertex;
-
-            layout_bindings[2].descriptorCount = 1;
+            /*layout_bindings[2].descriptorCount = 1;
             layout_bindings[2].descriptorType = vk::DescriptorType::eStorageBuffer;
             layout_bindings[2].binding = static_cast<u32>(meta::PipelineBinding::Color);
             layout_bindings[2].stageFlags = vk::ShaderStageFlagBits::eVertex;
@@ -113,16 +113,11 @@ namespace caelus::core::api {
             vertex_bindings[0].inputRate = vk::VertexInputRate::eVertex;
         }
 
-        std::array<vk::VertexInputAttributeDescription, 2> vertex_attributes{}; {
+        std::array<vk::VertexInputAttributeDescription, 1> vertex_attributes{}; {
             vertex_attributes[0].binding = 0;
             vertex_attributes[0].format = vk::Format::eR32G32B32Sfloat;
             vertex_attributes[0].location = 0;
             vertex_attributes[0].offset = offsetof(Vertex, pos);
-
-            vertex_attributes[1].binding = 0;
-            vertex_attributes[1].format = vk::Format::eR32G32Sfloat;
-            vertex_attributes[1].location = 1;
-            vertex_attributes[1].offset = offsetof(Vertex, tx_coords);
         }
 
         vk::PipelineVertexInputStateCreateInfo vertex_input_info{}; {
@@ -169,7 +164,7 @@ namespace caelus::core::api {
         vk::PipelineDepthStencilStateCreateInfo depth_stencil_info{}; {
             depth_stencil_info.stencilTestEnable = false;
             depth_stencil_info.depthTestEnable = false;
-            depth_stencil_info.depthWriteEnable = false;
+            depth_stencil_info.depthWriteEnable = true;
             depth_stencil_info.depthCompareOp = vk::CompareOp::eLess;
             depth_stencil_info.depthBoundsTestEnable = false;
             depth_stencil_info.minDepthBounds = 0.0f;

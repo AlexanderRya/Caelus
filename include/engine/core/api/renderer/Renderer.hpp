@@ -1,6 +1,7 @@
 #ifndef CAELUS_RENDERER_HPP
 #define CAELUS_RENDERER_HPP
 
+#include <engine/core/api/renderer/RenderGraph.hpp>
 #include <engine/core/components/Texture.hpp>
 #include <engine/core/api/DescriptorSet.hpp>
 #include <engine/core/api/MappedBuffer.hpp>
@@ -10,8 +11,6 @@
 #include <engine/Constants.hpp>
 #include <engine/Forwards.hpp>
 #include <engine/Types.hpp>
-
-#include <entt/entt.hpp>
 
 #include <unordered_map>
 #include <vector>
@@ -29,27 +28,23 @@ namespace caelus::core::api {
         // Drawing stuff
         std::vector<api::Buffer> vertex_buffers;
 
-        entt::entity camera_entity;
-        std::vector<entt::entity> objects;
-
-        std::unordered_map<meta::PipelineType, api::Pipeline> pipelines;
-        std::unordered_map<meta::PipelineLayoutType, api::PipelineLayout> layouts;
-        std::unordered_map<meta::SamplerType, vk::Sampler> samplers;
+        std::vector<vk::DrawIndirectCommand> draw_commands;
+        api::MappedBuffer draw_list;
 
         u32 frames_rendered{};
         u32 image_index{};
         u32 current_frame{};
 
-        void update_camera(entt::registry&);
     public:
         explicit Renderer(const VulkanContext&);
 
-        void build(entt::registry&);
+        void build(RenderGraph&);
+        void update(RenderGraph&);
 
         // Drawing
         u32 acquire_frame();
         void start();
-        void draw(entt::registry&);
+        void draw(RenderGraph&);
         void end();
         void submit();
     };

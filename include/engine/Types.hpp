@@ -30,11 +30,6 @@ namespace caelus {
 
     struct Vertex {
         glm::vec3 pos;
-        glm::vec2 tx_coords;
-    };
-
-    struct Instance {
-        glm::mat4 model;
     };
 } // namespace game
 

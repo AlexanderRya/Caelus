@@ -7,16 +7,18 @@
 
 namespace caelus::core::api {
     [[nodiscard]] static inline vk::PhysicalDevice get_physical_device(const VulkanContext& ctx) {
-        auto physical_devices = ctx.instance.enumeratePhysicalDevices({}, ctx.dispatcher);
+        auto physical_devices = ctx.instance.enumeratePhysicalDevices(ctx.dispatcher);
 
         for (const auto& device : physical_devices) {
             auto device_properties = device.getProperties(ctx.dispatcher);
             auto device_features = device.getFeatures(ctx.dispatcher);
 
+
             if ((device_properties.deviceType == vk::PhysicalDeviceType::eDiscreteGpu  ||
                 device_properties.deviceType == vk::PhysicalDeviceType::eIntegratedGpu ||
                 device_properties.deviceType == vk::PhysicalDeviceType::eVirtualGpu) &&
-                device_features.samplerAnisotropy) {
+                device_features.samplerAnisotropy &&
+                device_features.multiDrawIndirect){
 
                 logger::info("Selected physical device: ", device_properties.deviceName);
                 return device;
@@ -57,9 +59,18 @@ namespace caelus::core::api {
 
             vk::PhysicalDeviceFeatures features{}; {
                 features.samplerAnisotropy = true;
+                features.multiDrawIndirect = true;
+            }
+
+            vk::PhysicalDeviceDescriptorIndexingFeatures descriptor_indexing_features{}; {
+                descriptor_indexing_features.shaderSampledImageArrayNonUniformIndexing = true;
+                descriptor_indexing_features.descriptorBindingVariableDescriptorCount = true;
+                descriptor_indexing_features.descriptorBindingPartiallyBound = true;
+                descriptor_indexing_features.runtimeDescriptorArray = true;
             }
 
             vk::DeviceCreateInfo device_create_info{}; {
+                device_create_info.pNext = &descriptor_indexing_features;
                 device_create_info.ppEnabledExtensionNames = enabled_exts;
                 device_create_info.enabledExtensionCount = 1;
                 device_create_info.pQueueCreateInfos = &queue_create_info;

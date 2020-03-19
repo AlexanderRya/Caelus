@@ -81,4 +81,8 @@ namespace caelus::core::api {
     SingleMappedBuffer& MappedBuffer::operator [](const usize idx) {
         return mapped_buffers[idx];
     }
+
+    vk::Buffer SingleMappedBuffer::handle() const {
+        return buffer.handle;
+    }
 } // namespace caelus::core::api
