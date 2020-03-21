@@ -18,7 +18,7 @@ namespace caelus::core::api {
                 device_properties.deviceType == vk::PhysicalDeviceType::eIntegratedGpu ||
                 device_properties.deviceType == vk::PhysicalDeviceType::eVirtualGpu) &&
                 device_features.samplerAnisotropy &&
-                device_features.multiDrawIndirect){
+                device_features.multiDrawIndirect) {
 
                 logger::info("Selected physical device: ", device_properties.deviceName);
                 return device;

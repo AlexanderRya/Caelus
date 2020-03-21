@@ -2,10 +2,12 @@
 #define CAELUS_RENDERER_HPP
 
 #include <engine/core/api/renderer/RenderGraph.hpp>
+#include <engine/core/components/Transform.hpp>
 #include <engine/core/components/Texture.hpp>
 #include <engine/core/api/DescriptorSet.hpp>
 #include <engine/core/api/MappedBuffer.hpp>
 #include <engine/core/api/VertexBuffer.hpp>
+#include <engine/core/components/Mesh.hpp>
 #include <engine/core/api/Pipeline.hpp>
 #include <engine/core/api/Buffer.hpp>
 #include <engine/Constants.hpp>
@@ -28,9 +30,6 @@ namespace caelus::core::api {
         // Drawing stuff
         std::vector<api::Buffer> vertex_buffers;
 
-        std::vector<vk::DrawIndirectCommand> draw_commands;
-        api::MappedBuffer draw_list;
-
         u32 frames_rendered{};
         u32 image_index{};
         u32 current_frame{};
@@ -39,7 +38,7 @@ namespace caelus::core::api {
         explicit Renderer(const VulkanContext&);
 
         void build(RenderGraph&);
-        void update(RenderGraph&);
+        void update(components::Mesh&, components::Transform&);
 
         // Drawing
         u32 acquire_frame();

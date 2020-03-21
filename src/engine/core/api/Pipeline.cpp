@@ -163,7 +163,7 @@ namespace caelus::core::api {
 
         vk::PipelineDepthStencilStateCreateInfo depth_stencil_info{}; {
             depth_stencil_info.stencilTestEnable = false;
-            depth_stencil_info.depthTestEnable = false;
+            depth_stencil_info.depthTestEnable = true;
             depth_stencil_info.depthWriteEnable = true;
             depth_stencil_info.depthCompareOp = vk::CompareOp::eLess;
             depth_stencil_info.depthBoundsTestEnable = false;

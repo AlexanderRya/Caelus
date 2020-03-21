@@ -2,7 +2,11 @@
 
 layout (location = 0) in vec3 ivertex_pos;
 
-layout (set = 0, binding = 1) buffer readonly Instance {
+layout (std430, set = 0, binding = 0) uniform Camera {
+    mat4 pv_mat;
+} camera;
+
+layout (std430, set = 0, binding = 1) buffer readonly Instance {
     mat4 model[];
 } instances;
 

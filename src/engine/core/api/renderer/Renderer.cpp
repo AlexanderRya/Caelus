@@ -30,16 +30,9 @@ namespace caelus::core::api {
 
         frames_in_flight.resize(meta::frames_in_flight, nullptr);
 
+        // Primitive geometry
         vertex_buffers.emplace_back(api::make_vertex_buffer(components::generate_triangle_geometry(), ctx));
         vertex_buffers.emplace_back(api::make_vertex_buffer(components::generate_quad_geometry(), ctx));
-
-        api::MappedBuffer::CreateInfo info{}; {
-            info.ctx = &ctx;
-            info.type_size = sizeof(vk::DrawIndirectCommand);
-            info.buffer_usage = vk::BufferUsageFlagBits::eIndirectBuffer;
-        }
-
-        draw_list.create(info);
     }
 
     void Renderer::build(RenderGraph& graph) {
@@ -73,39 +66,33 @@ namespace caelus::core::api {
         }
     }
 
-    void Renderer::update(RenderGraph& graph) {
-        auto mesh_view = graph.registry.view<components::Mesh, components::Transform>();
+    void Renderer::update(components::Mesh& mesh, components::Transform& transform) {
+        std::vector<components::detail::InstanceGLSL> instances;
+        instances.reserve(transform.instances.size());
 
-        for (const auto& each : mesh_view) {
-            std::vector<components::detail::InstanceGLSL> instances;
-            auto [mesh, transform] = mesh_view.get<components::Mesh, components::Transform>(each);
+        for (const auto& instance : transform.instances) {
+            auto& model = instances.emplace_back().model;
 
-            instances.reserve(transform.instances.size());
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, instance.position);
+            model = glm::scale(model, instance.scale);
+            model = glm::rotate(model, instance.rotation, { 0.0f, 0.0f, 1.0f });
+        }
 
-            for (const auto& instance : transform.instances) {
-                auto& model = instances.emplace_back().model;
+        auto& current_buffer = mesh.instance_buffer[current_frame];
 
-                model = glm::mat4(1.0f);
-                model = glm::translate(model, instance.position);
-                model = glm::scale(model, instance.scale);
-                model = glm::rotate(model, instance.rotation, { 0.0f, 0.0f, 1.0f });
+        if (current_buffer.size() != instances.size()) {
+            current_buffer.write(instances.data(), instances.size());
+
+            api::DescriptorSet::WriteInfo write_info{}; {
+                write_info.binding = static_cast<u32>(meta::PipelineBinding::Instance);
+                write_info.type = vk::DescriptorType::eStorageBuffer;
+                write_info.buffer_info = { current_buffer.get_info() };
             }
 
-            auto& current_buffer = mesh.instance_buffer[current_frame];
-
-            if (current_buffer.size() != instances.size()) {
-                current_buffer.write(instances.data(), instances.size());
-
-                api::DescriptorSet::WriteInfo write_info{}; {
-                    write_info.binding = static_cast<u32>(meta::PipelineBinding::Instance);
-                    write_info.type = vk::DescriptorType::eStorageBuffer;
-                    write_info.buffer_info = { current_buffer.get_info() };
-                }
-
-                mesh.descriptor_set[current_frame].write(write_info);
-            } else {
-                current_buffer.write(instances.data(), instances.size());
-            }
+            mesh.descriptor_set[current_frame].write(write_info);
+        } else {
+            current_buffer.write(instances.data(), instances.size());
         }
     }
 
@@ -136,7 +123,7 @@ namespace caelus::core::api {
 
         std::array<vk::ClearValue, 2> clear_values{}; {
             clear_values[0].color = vk::ClearColorValue{ std::array { 0.02f, 0.02f, 0.02f, 0.0f } };
-            clear_values[1].depthStencil = { { 1.0f, 0 } };
+            clear_values[1].depthStencil = vk::ClearDepthStencilValue{ { 1.0f, 0 } };
         }
 
         vk::RenderPassBeginInfo render_pass_begin_info{}; {
@@ -171,29 +158,16 @@ namespace caelus::core::api {
         auto& command_buffer = command_buffers[image_index];
         auto mesh_view = graph.registry.view<components::Mesh, components::Transform>();
 
-        draw_commands.reserve(mesh_view.size());
-
-        update(graph);
-
         command_buffer.bindPipeline(vk::PipelineBindPoint::eGraphics, graph.pipelines[meta::PipelineType::MeshGeneric].handle, ctx.dispatcher);
         for (const auto& each : mesh_view) {
             auto [mesh, transform] = mesh_view.get<components::Mesh, components::Transform>(each);
 
+            update(mesh, transform);
+
             command_buffer.bindVertexBuffers(0, vertex_buffers[mesh.vertex_buffer_idx].handle, static_cast<vk::DeviceSize>(0), ctx.dispatcher);
             command_buffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, graph.layouts[meta::PipelineLayoutType::MeshGeneric].pipeline, 0, mesh.descriptor_set[current_frame].handle(), nullptr, ctx.dispatcher);
-            auto& command = draw_commands.emplace_back(); {
-                command.vertexCount = mesh.vertex_count;
-                command.instanceCount = transform.instances.size();
-                command.firstVertex = 0;
-                command.firstInstance = 0;
-            }
+            command_buffer.draw(mesh.vertex_count, mesh.instance_buffer[current_frame].size(), 0, 0, ctx.dispatcher);
         }
-
-        draw_list[current_frame].write(draw_commands.data(), draw_commands.size());
-
-        command_buffer.drawIndirect(draw_list[current_frame].handle(), static_cast<vk::DeviceSize>(0), draw_list[current_frame].size(), sizeof(vk::DrawIndirectCommand), ctx.dispatcher);
-
-        draw_commands.clear();
     }
 
     void Renderer::end() {

@@ -1,4 +1,4 @@
 #define STB_DEFINE
-#include <stb/stb.h>
+#include <stb.h>
 #define STB_IMAGE_IMPLEMENTATION
-#include <stb/stb_image.h>
+#include <stb_image.h>

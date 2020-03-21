@@ -33,21 +33,19 @@ namespace caelus::core {
     }
 
     void Application::run() {
-        auto triangle = graph.registry.create(); {
+        auto& triangle = graph.objects.emplace_back(graph.registry.create()); {
             graph.registry.emplace<components::Mesh>(triangle, components::Mesh{
-                .vertex_buffer_idx = 0,
-                .vertex_count = 3
+                0,
+                3
             });
 
-            components::Transform transform{};
-            for (int i = 0; i < 65536; ++i) {
-                static double x = -0.99;
-
-                transform.instances.emplace_back(components::Transform::Instance{
-                    .position = { x += 0.01f, 0.0f, 0.0f },
-                    .scale = { 1.0f, 1.0f, 1.0f },
-                    .rotation = 0
-                });
+            components::Transform transform{}; {
+                for (int i = 0; i < 65536; ++i) {
+                    auto& instance = transform.instances.emplace_back();
+                    instance.position = { 0.0f, 0.0f, -i };
+                    instance.scale = { 0.5f, 0.5f, 0.5f };
+                    instance.rotation = 0;
+                }
             }
 
             graph.registry.emplace<components::Transform>(triangle, std::move(transform));
@@ -55,8 +53,10 @@ namespace caelus::core {
 
         renderer.build(graph);
 
+        auto mesh_view = graph.registry.view<components::Mesh, components::Transform>();
+
         while (!window.should_close()) {
-            f32 frame_time = glfwGetTime();
+            const f32 frame_time = glfwGetTime();
             delta_time = frame_time - last_frame;
             last_frame = frame_time;
 
@@ -66,6 +66,15 @@ namespace caelus::core {
 
             window.poll_events();
 
+             /* Update */ {
+                auto& object = graph.objects[0];
+
+                auto& quad_transform = mesh_view.get<components::Transform>(object);
+
+                quad_transform.instances[0].rotation = static_cast<float>(glfwGetTime());
+            }
+
+            // Render
             renderer.acquire_frame();
 
             renderer.start(); {
