@@ -92,7 +92,8 @@ set(CAELUS_SOURCES
         src/engine/core/api/Image.cpp
         src/engine/core/components/Texture.cpp
         src/engine/core/api/Sampler.cpp
-        src/engine/core/components/Mesh.cpp)
+        src/engine/core/components/Mesh.cpp
+        src/engine/core/Globals.cpp)
 
 add_executable(Caelus
         ${CAELUS_HEADERS}

@@ -38,7 +38,8 @@ namespace caelus::core::api {
         explicit Renderer(const VulkanContext&);
 
         void build(RenderGraph&);
-        void update(components::Mesh&, components::Transform&);
+        void update_camera(RenderGraph&);
+        void update_object(components::Mesh&, components::Transform&);
 
         // Drawing
         u32 acquire_frame();

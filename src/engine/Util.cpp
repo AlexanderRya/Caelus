@@ -9,9 +9,11 @@ namespace caelus::util {
     HMODULE load_module(LPCSTR name) {
         return LoadLibraryA(name);
     }
+
     void (*load_symbol(HMODULE handle, LPCSTR symbol))() {
         return reinterpret_cast<void(*)()>(GetProcAddress(handle, symbol));
     }
+
     void close_module(HMODULE handle) {
         FreeLibrary(handle);
     }
@@ -19,9 +21,11 @@ namespace caelus::util {
     void* load_module(const char* name) {
         return dlopen(name, RTLD_LAZY | RTLD_LOCAL);
     }
+
     void (*load_symbol(void* handle, const char* symbol))() {
         return reinterpret_cast<void(*)()>(dlsym(handle, symbol));
     }
+
     void close_module(void* handle) {
         dlclose(handle);
     }

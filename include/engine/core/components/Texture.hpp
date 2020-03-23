@@ -13,15 +13,14 @@ namespace caelus::core::components {
          api::Image image;
          vk::ImageView image_view;
 
-         const meta::SamplerType type;
+         const vk::Sampler sampler;
          const api::VulkanContext& ctx;
     public:
-        explicit Texture(const api::VulkanContext&, const meta::SamplerType);
+        explicit Texture(const api::VulkanContext&, const vk::Sampler);
 
         void load(const std::filesystem::path&);
 
-        [[nodiscard]] meta::SamplerType get_type() const;
-        [[nodiscard]] vk::DescriptorImageInfo get_info(const vk::Sampler) const;
+        [[nodiscard]] vk::DescriptorImageInfo get_info() const;
     };
 } // namespace caelus::core::components
 

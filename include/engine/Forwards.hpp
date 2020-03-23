@@ -36,6 +36,7 @@ namespace caelus::core::api {
 
 namespace caelus::core::components {
     class Texture;
+    class Camera;
 } // namespace caelus::core::components
 
 #endif //CAELUS_FORWARDS_HPP

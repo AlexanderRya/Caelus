@@ -1,6 +1,7 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+#include <engine/core/components/Camera.hpp>
 #include <engine/core/api/VulkanContext.hpp>
 #include <engine/core/Globals.hpp>
 #include <engine/core/Window.hpp>
@@ -30,11 +31,11 @@ namespace caelus::core {
         width = w;
         height = h;
 
-        if (!(window = glfwCreateWindow(w, h, title, nullptr, nullptr))) {
+        if (!(window = glfwCreateWindow(width, height, title, nullptr, nullptr))) {
             throw std::runtime_error("Failed window creation");
         }
 
-        /*glfwSetCursorPosCallback(window, [](GLFWwindow*, const double xpos, const double ypos) {
+        glfwSetCursorPosCallback(window, [](GLFWwindow*, const double xpos, const double ypos) {
             static double lastX = width / 2.0, lastY = height / 2.0;
             static bool first = true;
 
@@ -51,13 +52,9 @@ namespace caelus::core {
             lastY = ypos;
 
             camera.process(xoffset, yoffset);
-        });*/
+        });
 
-        /*glfwSetMouseButtonCallback(window, [](GLFWwindow*, int, int, int) {
-
-        });*/
-
-        //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
         logger::info("Window successfully created with size: ", width, "x", height);
     }

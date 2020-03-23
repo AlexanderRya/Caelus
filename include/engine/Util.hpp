@@ -42,7 +42,7 @@ namespace caelus::util {
             }
         }
 
-        auto internal_fmt = [](const std::string& istr, std::stringstream& oss, size_t & start_idx, const auto& var) {
+        auto internal_fmt = [](const std::string& istr, std::stringstream& oss, size_t& start_idx, const auto& var) {
             size_t index = istr.find("{}", start_idx);
 
             if (index == std::string::npos) {
@@ -55,6 +55,7 @@ namespace caelus::util {
 
         std::stringstream oss{};
         size_t start_idx = 0;
+
         (internal_fmt(str, oss, start_idx, std::forward<Args>(args)), ...);
 
         return oss << str.substr(start_idx, str.length()), oss.str();

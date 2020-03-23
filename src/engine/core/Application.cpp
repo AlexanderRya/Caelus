@@ -30,30 +30,29 @@ namespace caelus::core {
         }
 
         graph.pipelines[meta::PipelineType::MeshGeneric] = api::make_generic_pipeline(create_info);
+
+        graph.textures.emplace_back(context, graph.samplers[meta::SamplerType::Default]).load("../resources/textures/dirt.jpg");
     }
 
     void Application::run() {
-        auto& triangle = graph.objects.emplace_back(graph.registry.create()); {
-            graph.registry.emplace<components::Mesh>(triangle, components::Mesh{
-                0,
-                3
+        auto& quad = graph.objects.emplace_back(graph.registry.create()); {
+            graph.registry.emplace<components::Mesh>(quad, components::Mesh{
+                .vertex_buffer_idx = 1,
+                .vertex_count = 6,
             });
 
-            components::Transform transform{}; {
-                for (int i = 0; i < 65536; ++i) {
-                    auto& instance = transform.instances.emplace_back();
-                    instance.position = { 0.0f, 0.0f, -i };
-                    instance.scale = { 0.5f, 0.5f, 0.5f };
-                    instance.rotation = 0;
+            graph.registry.emplace<components::Transform>(quad, components::Transform{
+                .instances = {
+                    components::Transform::Instance{
+                        .position = { 0.0f, 0.0f, 0.0f },
+                        .scale = { 1.0f, 1.0f, 1.0f },
+                        .rotation = 0
+                    }
                 }
-            }
-
-            graph.registry.emplace<components::Transform>(triangle, std::move(transform));
+            });
         }
 
         renderer.build(graph);
-
-        auto mesh_view = graph.registry.view<components::Mesh, components::Transform>();
 
         while (!window.should_close()) {
             const f32 frame_time = glfwGetTime();
@@ -64,15 +63,9 @@ namespace caelus::core {
                 window.close();
             }
 
+            camera.move(window);
+
             window.poll_events();
-
-             /* Update */ {
-                auto& object = graph.objects[0];
-
-                auto& quad_transform = mesh_view.get<components::Transform>(object);
-
-                quad_transform.instances[0].rotation = static_cast<float>(glfwGetTime());
-            }
 
             // Render
             renderer.acquire_frame();

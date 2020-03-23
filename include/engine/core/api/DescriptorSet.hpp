@@ -13,10 +13,28 @@ namespace caelus::core::api {
         std::vector<SingleDescriptorSet> descriptor_sets{};
         const api::VulkanContext* ctx{};
     public:
-        struct WriteInfo {
+        struct SingleWriteBufferInfo {
+            u64 binding{};
+            vk::DescriptorType type{};
+            vk::DescriptorBufferInfo buffer_info{};
+        };
+
+        struct SingleWriteImageInfo {
+            u64 binding{};
+            vk::DescriptorType type{};
+            std::vector<vk::DescriptorImageInfo> image_info{};
+        };
+
+        struct WriteBufferInfo {
             u64 binding{};
             vk::DescriptorType type{};
             std::vector<vk::DescriptorBufferInfo> buffer_info{};
+        };
+
+        struct WriteImageInfo {
+            u64 binding{};
+            vk::DescriptorType type{};
+            std::vector<std::vector<vk::DescriptorImageInfo>> image_info{};
         };
 
         struct CreateInfo {
@@ -28,10 +46,10 @@ namespace caelus::core::api {
 
         void create(const CreateInfo&);
 
-        void write(const std::vector<WriteInfo>&);
-        void write(const WriteInfo&);
+        void write(const std::vector<WriteBufferInfo>&);
+        void write(const WriteImageInfo&);
 
-        [[nodiscard]] SingleDescriptorSet operator [](const usize) const;
+        [[nodiscard]] SingleDescriptorSet& operator [](const usize);
     };
 
     class SingleDescriptorSet {
@@ -40,8 +58,8 @@ namespace caelus::core::api {
     public:
         void create(const DescriptorSet::CreateInfo&);
 
-        void write(const std::vector<DescriptorSet::WriteInfo>&);
-        void write(const DescriptorSet::WriteInfo&);
+        void write(const std::vector<DescriptorSet::SingleWriteBufferInfo>&);
+        void write(const DescriptorSet::SingleWriteBufferInfo&);
 
         [[nodiscard]] vk::DescriptorSet handle() const;
     };

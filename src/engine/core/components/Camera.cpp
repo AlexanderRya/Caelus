@@ -69,6 +69,7 @@ namespace caelus::core::components {
             sin(glm::radians(pitch)),
             sin(glm::radians(yaw)) * cos(glm::radians(pitch))
         };
+
         cam_front = glm::normalize(front);
         cam_right = glm::normalize(glm::cross(cam_front, cam_wup));
         cam_up = glm::normalize(glm::cross(cam_right, cam_front));

@@ -9,8 +9,7 @@ namespace caelus::meta {
     enum class PipelineBinding : u32 {
         Camera = 0,
         Instance = 1,
-        Color = 2,
-        DefaultSampler = 3
+        DefaultSampler = 2
     };
 
     enum class PipelineType {

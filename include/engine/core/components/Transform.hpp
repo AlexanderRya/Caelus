@@ -10,6 +10,7 @@ namespace caelus::core::components {
     namespace detail {
         struct alignas(16) InstanceGLSL {
             glm::mat4 model;
+            glm::vec2 uvs;
         };
     } // namespace caelus::core::components::detail
 

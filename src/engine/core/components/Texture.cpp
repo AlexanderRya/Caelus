@@ -9,8 +9,8 @@
 #include <fstream>
 
 namespace caelus::core::components {
-    Texture::Texture(const api::VulkanContext& ctx, const meta::SamplerType type)
-        : type(type),
+    Texture::Texture(const api::VulkanContext& ctx, const vk::Sampler sampler)
+        : sampler(sampler),
           ctx(ctx) {
         stbi_set_flip_vertically_on_load(true);
     }
@@ -73,11 +73,7 @@ namespace caelus::core::components {
                      ", channels: ", channels);
     }
 
-    meta::SamplerType Texture::get_type() const {
-        return type;
-    }
-
-    vk::DescriptorImageInfo Texture::get_info(const vk::Sampler sampler) const {
+    vk::DescriptorImageInfo Texture::get_info() const {
         vk::DescriptorImageInfo info{}; {
             info.sampler = sampler;
             info.imageView = image_view;
