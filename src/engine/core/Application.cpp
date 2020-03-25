@@ -1,4 +1,5 @@
 #include <engine/core/components/Transform.hpp>
+#include <engine/core/components/Material.hpp>
 #include <engine/core/components/Texture.hpp>
 #include <engine/core/components/Camera.hpp>
 #include <engine/core/components/Mesh.hpp>
@@ -18,20 +19,20 @@ namespace caelus::core {
       renderer(context) {}
 
     void Application::load() {
-        graph.layouts[meta::PipelineLayoutType::MeshGeneric] = api::make_generic_pipeline_layout(context);
+            graph.layouts[meta::PipelineLayoutType::eMeshGeneric] = api::make_generic_pipeline_layout(context);
 
-        graph.samplers[meta::SamplerType::Default] = api::make_default_sampler(context);
+        graph.samplers[meta::SamplerType::eDefault] = api::make_default_sampler(context);
 
         api::Pipeline::CreateInfo create_info{}; {
             create_info.ctx = &context;
             create_info.vertex_path = "../resources/shaders/generic.vert.spv";
             create_info.fragment_path = "../resources/shaders/generic.frag.spv";
-            create_info.layout = graph.layouts[meta::PipelineLayoutType::MeshGeneric];
+            create_info.layout = graph.layouts[meta::PipelineLayoutType::eMeshGeneric];
         }
 
-        graph.pipelines[meta::PipelineType::MeshGeneric] = api::make_generic_pipeline(create_info);
+        graph.pipelines[meta::PipelineType::eMeshGeneric] = api::make_generic_pipeline(create_info);
 
-        graph.textures.emplace_back(context, graph.samplers[meta::SamplerType::Default]).load("../resources/textures/dirt.jpg");
+        graph.textures.emplace_back(context, graph.samplers[meta::SamplerType::eDefault]).load("../resources/textures/dirt.jpg");
     }
 
     void Application::run() {
@@ -49,6 +50,10 @@ namespace caelus::core {
                         .rotation = 0
                     }
                 }
+            });
+
+            graph.registry.emplace<components::Material>(quad, components::Material{
+                .texture_idx = 0
             });
         }
 

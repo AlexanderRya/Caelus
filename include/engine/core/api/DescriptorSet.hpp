@@ -19,12 +19,6 @@ namespace caelus::core::api {
             vk::DescriptorBufferInfo buffer_info{};
         };
 
-        struct SingleWriteImageInfo {
-            u64 binding{};
-            vk::DescriptorType type{};
-            std::vector<vk::DescriptorImageInfo> image_info{};
-        };
-
         struct WriteBufferInfo {
             u64 binding{};
             vk::DescriptorType type{};
@@ -34,7 +28,7 @@ namespace caelus::core::api {
         struct WriteImageInfo {
             u64 binding{};
             vk::DescriptorType type{};
-            std::vector<std::vector<vk::DescriptorImageInfo>> image_info{};
+            std::vector<vk::DescriptorImageInfo> image_info{};
         };
 
         struct CreateInfo {
@@ -60,6 +54,7 @@ namespace caelus::core::api {
 
         void write(const std::vector<DescriptorSet::SingleWriteBufferInfo>&);
         void write(const DescriptorSet::SingleWriteBufferInfo&);
+        void write(const DescriptorSet::WriteImageInfo&);
 
         [[nodiscard]] vk::DescriptorSet handle() const;
     };

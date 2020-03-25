@@ -64,7 +64,7 @@ set(CAELUS_HEADERS
         include/engine/core/api/Sampler.hpp
         include/engine/core/components/Mesh.hpp
         include/engine/core/api/renderer/RenderGraph.hpp
-        include/engine/core/components/Transform.hpp)
+        include/engine/core/components/Transform.hpp include/engine/core/components/Material.hpp)
 
 set(CAELUS_SOURCES
         ${STB_SOURCES}
@@ -104,7 +104,7 @@ if (UNIX)
 endif()
 
 if (WIN32)
-    target_compile_definitions(Caelus PRIVATE _CRT_SECURE_NO_WARNINGS)
+    target_compile_definitions(Caelus PRIVATE _CRT_SECURE_NO_WARNINGS NOMINMAX WIN32_LEAN_AND_MEAN)
 endif()
 
 if (UNIX)

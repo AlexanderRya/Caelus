@@ -13,14 +13,20 @@ namespace caelus::core::api {
             auto device_properties = device.getProperties(ctx.dispatcher);
             auto device_features = device.getFeatures(ctx.dispatcher);
 
-
             if ((device_properties.deviceType == vk::PhysicalDeviceType::eDiscreteGpu  ||
                 device_properties.deviceType == vk::PhysicalDeviceType::eIntegratedGpu ||
                 device_properties.deviceType == vk::PhysicalDeviceType::eVirtualGpu) &&
+
+                device_features.shaderSampledImageArrayDynamicIndexing &&
                 device_features.samplerAnisotropy &&
                 device_features.multiDrawIndirect) {
 
+                auto major = device_properties.apiVersion >> 22u;
+                auto minor = device_properties.apiVersion >> 12u & 0x3ffu;
+                auto patch = device_properties.apiVersion & 0xfffu;
+
                 logger::info("Selected physical device: ", device_properties.deviceName);
+                logger::info("Vulkan version: ", major, ".", minor, ".", patch);
                 return device;
             }
         }

@@ -32,7 +32,10 @@ namespace caelus::core::api {
         }
     }
 
-    void DescriptorSet::write(const DescriptorSet::WriteImageInfo&) {
+    void DescriptorSet::write(const DescriptorSet::WriteImageInfo& info) {
+        for (auto& each : descriptor_sets) {
+            each.write(info);
+        }
     }
 
     SingleDescriptorSet& DescriptorSet::operator [](const usize idx) {
@@ -42,7 +45,16 @@ namespace caelus::core::api {
     void SingleDescriptorSet::create(const DescriptorSet::CreateInfo& info) {
         ctx = info.ctx;
 
+        std::array<u32, 1> counts{}; {
+            counts[0] = 128;
+        }
+        vk::DescriptorSetVariableDescriptorCountAllocateInfo set_counts{}; {
+            set_counts.descriptorSetCount = counts.size();
+            set_counts.pDescriptorCounts = counts.data();
+        }
+
         vk::DescriptorSetAllocateInfo allocate_info{}; {
+            allocate_info.pNext = &set_counts;
             allocate_info.descriptorSetCount = 1;
             allocate_info.pSetLayouts = &info.layout;
             allocate_info.descriptorPool = ctx->descriptor_pool;
@@ -78,6 +90,20 @@ namespace caelus::core::api {
             write.pTexelBufferView = nullptr;
             write.descriptorCount = 1;
             write.pBufferInfo = &info.buffer_info;
+        }
+
+        ctx->device.logical.updateDescriptorSets(write, nullptr, ctx->dispatcher);
+    }
+
+    void SingleDescriptorSet::write(const DescriptorSet::WriteImageInfo& info) {
+        vk::WriteDescriptorSet write{}; {
+            write.descriptorType = info.type;
+            write.dstBinding = info.binding;
+            write.dstArrayElement = 0;
+            write.dstSet = descriptor_set;
+            write.pTexelBufferView = nullptr;
+            write.descriptorCount = info.image_info.size();
+            write.pImageInfo = info.image_info.data();
         }
 
         ctx->device.logical.updateDescriptorSets(write, nullptr, ctx->dispatcher);

@@ -1,5 +1,6 @@
 #include <engine/core/api/renderer/Renderer.hpp>
 #include <engine/core/components/Transform.hpp>
+#include <engine/core/components/Material.hpp>
 #include <engine/core/api/VulkanContext.hpp>
 #include <engine/core/components/Camera.hpp>
 #include <engine/core/api/DescriptorSet.hpp>
@@ -40,6 +41,14 @@ namespace caelus::core::api {
     }
 
     void Renderer::build(RenderGraph& graph) {
+        api::DescriptorSet::WriteImageInfo write_image_info{}; {
+            write_image_info.image_info = {
+                graph.textures[0].get_info()
+            };
+            write_image_info.binding = static_cast<u32>(meta::PipelineBinding::eMaterial);
+            write_image_info.type = vk::DescriptorType::eCombinedImageSampler;
+        }
+
         api::MappedBuffer::CreateInfo info{}; {
             info.ctx = &ctx;
             info.buffer_usage = vk::BufferUsageFlagBits::eUniformBuffer;
@@ -54,7 +63,7 @@ namespace caelus::core::api {
 
             api::DescriptorSet::CreateInfo descriptor_set_info{}; {
                 descriptor_set_info.ctx = &ctx;
-                descriptor_set_info.layout = graph.layouts[meta::PipelineLayoutType::MeshGeneric].set;
+                descriptor_set_info.layout = graph.layouts[meta::PipelineLayoutType::eMeshGeneric].set;
             }
 
             mesh.descriptor_set.create(descriptor_set_info);
@@ -67,17 +76,18 @@ namespace caelus::core::api {
 
             mesh.instance_buffer.create(buffer_info);
 
-            std::vector<api::DescriptorSet::WriteBufferInfo> write_info(2); {
-                write_info[0].buffer_info = graph.camera_buffer.get_info();
-                write_info[0].binding = static_cast<u32>(meta::PipelineBinding::Camera);
-                write_info[0].type = vk::DescriptorType::eUniformBuffer;
+            std::vector<api::DescriptorSet::WriteBufferInfo> write_buffer_info(2); {
+                write_buffer_info[0].buffer_info = graph.camera_buffer.get_info();
+                write_buffer_info[0].binding = static_cast<u32>(meta::PipelineBinding::eCamera);
+                write_buffer_info[0].type = vk::DescriptorType::eUniformBuffer;
 
-                write_info[1].buffer_info = mesh.instance_buffer.get_info();
-                write_info[1].binding = static_cast<u32>(meta::PipelineBinding::Instance);
-                write_info[1].type = vk::DescriptorType::eStorageBuffer;
+                write_buffer_info[1].buffer_info = mesh.instance_buffer.get_info();
+                write_buffer_info[1].binding = static_cast<u32>(meta::PipelineBinding::eInstance);
+                write_buffer_info[1].type = vk::DescriptorType::eStorageBuffer;
             }
 
-            mesh.descriptor_set.write(write_info);
+            mesh.descriptor_set.write(write_buffer_info);
+            mesh.descriptor_set.write(write_image_info);
         }
     }
 
@@ -85,7 +95,7 @@ namespace caelus::core::api {
         auto projection = glm::perspective(
             glm::radians(60.f),
             ctx.swapchain.extent.width / static_cast<float>(ctx.swapchain.extent.height),
-            0.01f,
+            0.05f,
             1000.f);
 
         projection[1][1] *= -1;
@@ -114,7 +124,7 @@ namespace caelus::core::api {
             current_buffer.write(instances.data(), instances.size());
 
             api::DescriptorSet::SingleWriteBufferInfo write_info{}; {
-                write_info.binding = static_cast<u32>(meta::PipelineBinding::Instance);
+                write_info.binding = static_cast<u32>(meta::PipelineBinding::eInstance);
                 write_info.type = vk::DescriptorType::eStorageBuffer;
                 write_info.buffer_info = current_buffer.get_info();
             }
@@ -185,18 +195,19 @@ namespace caelus::core::api {
 
     void Renderer::draw(RenderGraph& graph) {
         auto& command_buffer = command_buffers[image_index];
-        auto mesh_view = graph.registry.view<components::Mesh, components::Transform>();
+        auto mesh_view = graph.registry.view<components::Mesh, components::Transform, components::Material>();
 
         update_camera(graph);
 
-        command_buffer.bindPipeline(vk::PipelineBindPoint::eGraphics, graph.pipelines[meta::PipelineType::MeshGeneric].handle, ctx.dispatcher);
+        command_buffer.bindPipeline(vk::PipelineBindPoint::eGraphics, graph.pipelines[meta::PipelineType::eMeshGeneric].handle, ctx.dispatcher);
         for (const auto& each : mesh_view) {
-            auto [mesh, transform] = mesh_view.get<components::Mesh, components::Transform>(each);
+            auto [mesh, transform, material] = mesh_view.get<components::Mesh, components::Transform, components::Material>(each);
 
             update_object(mesh, transform);
 
             command_buffer.bindVertexBuffers(0, vertex_buffers[mesh.vertex_buffer_idx].handle, static_cast<vk::DeviceSize>(0), ctx.dispatcher);
-            command_buffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, graph.layouts[meta::PipelineLayoutType::MeshGeneric].pipeline, 0, mesh.descriptor_set[current_frame].handle(), nullptr, ctx.dispatcher);
+            command_buffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, graph.layouts[meta::PipelineLayoutType::eMeshGeneric].pipeline, 0, mesh.descriptor_set[current_frame].handle(), nullptr, ctx.dispatcher);
+            command_buffer.pushConstants<u32>(graph.layouts[meta::PipelineLayoutType::eMeshGeneric].pipeline, vk::ShaderStageFlagBits::eFragment, 0, material.texture_idx, ctx.dispatcher);
             command_buffer.draw(mesh.vertex_count, mesh.instance_buffer[current_frame].size(), 0, 0, ctx.dispatcher);
         }
     }

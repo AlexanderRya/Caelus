@@ -14,6 +14,8 @@
     #include <dlfcn.h>
 #endif
 
+#define CAELUS_MAKE_VERSION(major, minor, patch) (((major) << 22u) | ((minor) << 12u) | (patch))
+
 namespace caelus::util {
 #if _WIN32
     constexpr inline const char* vulkan_module = "vulkan-1.dll";
@@ -21,7 +23,7 @@ namespace caelus::util {
     void (*load_symbol(HMODULE, LPCSTR))();
     void close_module(HMODULE);
 #elif __linux__
-    constexpr inline const char* vulkan_module = "libvulkan.so.1";
+    constexpr inline const char* vulkan_module = "libvulkan.so";
     void* load_module(const char*);
     void (*load_symbol(void*, const char*))();
     void close_module(void*);

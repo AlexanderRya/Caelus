@@ -35,6 +35,7 @@ namespace caelus::core::api {
 } // namespace caelus::core::api
 
 namespace caelus::core::components {
+    struct Material;
     class Texture;
     class Camera;
 } // namespace caelus::core::components

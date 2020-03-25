@@ -30,7 +30,7 @@ namespace caelus::core::api {
         std::vector<vk::Image> images{};
         std::vector<vk::ImageView> image_views{};
 
-        Image depth_image{};
+        api::Image depth_image{};
         vk::ImageView depth_view{};
     };
 
