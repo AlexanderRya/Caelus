@@ -45,12 +45,11 @@ namespace caelus::core::api {
     void SingleDescriptorSet::create(const DescriptorSet::CreateInfo& info) {
         ctx = info.ctx;
 
-        std::array<u32, 1> counts{}; {
-            counts[0] = 128;
-        }
+        u32 upper_bound = 128;
+
         vk::DescriptorSetVariableDescriptorCountAllocateInfo set_counts{}; {
-            set_counts.descriptorSetCount = counts.size();
-            set_counts.pDescriptorCounts = counts.data();
+            set_counts.descriptorSetCount = 1;
+            set_counts.pDescriptorCounts = &upper_bound;
         }
 
         vk::DescriptorSetAllocateInfo allocate_info{}; {

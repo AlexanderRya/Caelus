@@ -67,17 +67,17 @@ namespace caelus::core::api {
 
         layout.set = ctx.device.logical.createDescriptorSetLayout(set_layout_create_info, nullptr, ctx.dispatcher);
 
-        vk::PushConstantRange push_constant_range{}; {
-            push_constant_range.offset = 0;
-            push_constant_range.size = 1 * sizeof(u32);
-            push_constant_range.stageFlags = vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment;
+        vk::PushConstantRange sampler_index{}; {
+            sampler_index.offset = 0;
+            sampler_index.size = 1 * sizeof(u32);
+            sampler_index.stageFlags = vk::ShaderStageFlagBits::eFragment;
         }
 
         vk::PipelineLayoutCreateInfo layout_create_info{}; {
             layout_create_info.setLayoutCount = 1;
             layout_create_info.pSetLayouts = &layout.set;
             layout_create_info.pushConstantRangeCount = 1;
-            layout_create_info.pPushConstantRanges = &push_constant_range;
+            layout_create_info.pPushConstantRanges = &sampler_index;
         }
 
         layout.pipeline = ctx.device.logical.createPipelineLayout(layout_create_info, nullptr, ctx.dispatcher);
