@@ -19,7 +19,7 @@ namespace caelus::core {
       renderer(context) {}
 
     void Application::load() {
-            graph.layouts[meta::PipelineLayoutType::eMeshGeneric] = api::make_generic_pipeline_layout(context);
+        graph.layouts[meta::PipelineLayoutType::eMeshGeneric] = api::make_generic_pipeline_layout(context);
 
         graph.samplers[meta::SamplerType::eDefault] = api::make_default_sampler(context);
 
@@ -38,8 +38,8 @@ namespace caelus::core {
     void Application::run() {
         auto& quad = graph.objects.emplace_back(graph.registry.create()); {
             graph.registry.emplace<components::Mesh>(quad, components::Mesh{
-                .vertex_buffer_idx = 1,
-                .vertex_count = 6,
+                .vertex_buffer_idx = 2,
+                .vertex_count = 36,
             });
 
             graph.registry.emplace<components::Transform>(quad, components::Transform{

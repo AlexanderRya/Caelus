@@ -93,7 +93,7 @@ set(CAELUS_SOURCES
         src/engine/core/components/Texture.cpp
         src/engine/core/api/Sampler.cpp
         src/engine/core/components/Mesh.cpp
-        src/engine/core/Globals.cpp)
+        src/engine/core/Globals.cpp src/engine/core/components/Transform.cpp)
 
 add_executable(Caelus
         ${CAELUS_HEADERS}

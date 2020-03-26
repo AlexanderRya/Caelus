@@ -7,21 +7,18 @@
 #include <vector>
 
 namespace caelus::core::components {
-    namespace detail {
-        struct alignas(16) InstanceGLSL {
-            glm::mat4 model;
-            glm::vec2 uvs;
-        };
-    } // namespace caelus::core::components::detail
-
     struct Transform {
         struct Instance {
             glm::vec3 position;
             glm::vec3 scale;
             float rotation;
+
+            [[nodiscard]] glm::mat4 model() const;
         };
 
         std::vector<Instance> instances;
+
+        [[nodiscard]] std::vector<glm::mat4> models();
     };
 } // namespace caelus::core::components
 

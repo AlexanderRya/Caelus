@@ -38,6 +38,7 @@ namespace caelus::core::api {
         // Primitive geometry
         vertex_buffers.emplace_back(api::make_vertex_buffer(components::generate_triangle_geometry(), ctx));
         vertex_buffers.emplace_back(api::make_vertex_buffer(components::generate_quad_geometry(), ctx));
+        vertex_buffers.emplace_back(api::make_vertex_buffer(components::generate_cube_geometry(), ctx));
     }
 
     void Renderer::build(RenderGraph& graph) {
@@ -71,7 +72,7 @@ namespace caelus::core::api {
             api::MappedBuffer::CreateInfo buffer_info{}; {
                 buffer_info.ctx = &ctx;
                 buffer_info.buffer_usage = vk::BufferUsageFlagBits::eStorageBuffer;
-                buffer_info.type_size = sizeof(components::detail::InstanceGLSL);
+                buffer_info.type_size = sizeof(glm::mat4);
             }
 
             mesh.instance_buffer.create(buffer_info);
@@ -93,7 +94,7 @@ namespace caelus::core::api {
 
     void Renderer::update_camera(RenderGraph& graph) {
         auto projection = glm::perspective(
-            glm::radians(60.f),
+            glm::radians(70.f),
             ctx.swapchain.extent.width / static_cast<float>(ctx.swapchain.extent.height),
             0.05f,
             1000.f);
@@ -105,18 +106,8 @@ namespace caelus::core::api {
         graph.camera_buffer[current_frame].write(&proj_view, 1);
     }
 
-    void Renderer::update_object(components::Mesh& mesh, components::Transform& transform) {
-        std::vector<components::detail::InstanceGLSL> instances;
-        instances.reserve(transform.instances.size());
-
-        for (const auto& instance : transform.instances) {
-            auto& model = instances.emplace_back().model;
-
-            model = glm::mat4(1.0f);
-            model = glm::translate(model, instance.position);
-            model = glm::scale(model, instance.scale);
-            model = glm::rotate(model, instance.rotation, { 0.0f, 0.0f, 1.0f });
-        }
+    void Renderer::update_transforms(components::Mesh& mesh, components::Transform& transform) {
+        std::vector<glm::mat4> instances = transform.models();
 
         auto& current_buffer = mesh.instance_buffer[current_frame];
 
@@ -203,7 +194,7 @@ namespace caelus::core::api {
         for (const auto& each : mesh_view) {
             auto [mesh, transform, material] = mesh_view.get<components::Mesh, components::Transform, components::Material>(each);
 
-            update_object(mesh, transform);
+            update_transforms(mesh, transform);
 
             command_buffer.bindVertexBuffers(0, vertex_buffers[mesh.vertex_buffer_idx].handle, static_cast<vk::DeviceSize>(0), ctx.dispatcher);
             command_buffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, graph.layouts[meta::PipelineLayoutType::eMeshGeneric].pipeline, 0, mesh.descriptor_set[current_frame].handle(), nullptr, ctx.dispatcher);

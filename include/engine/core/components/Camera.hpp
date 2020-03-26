@@ -13,16 +13,16 @@
 namespace caelus::core::components {
     class Camera {
         static constexpr f32 speed = 2.f;
-        static constexpr f32 sensitivity = 5.0e-2f;
+        static constexpr f32 sensitivity = 8.0e-2f;
 
         f64 yaw;
         f64 pitch;
 
-        glm::vec3 cam_pos = glm::vec3(0.0f, 1.0f, 3.0f);
+        glm::vec3 cam_pos = glm::vec3(0.0f, 0.0f, 3.0f);
         glm::vec3 cam_front = glm::vec3(0.0f, 0.0f, -1.0f);
         glm::vec3 cam_up = glm::vec3(0.0f, 1.0f, 0.0f);
         glm::vec3 cam_right = glm::vec3();
-        glm::vec3 cam_wup = glm::vec3(0.0f, 1.0f, 0.0f);
+        constexpr static glm::vec3 cam_wup = glm::vec3(0.0f, 1.0f, 0.0f);
     public:
         Camera() noexcept;
         void move(const Window&);

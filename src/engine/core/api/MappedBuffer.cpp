@@ -21,7 +21,7 @@ namespace caelus::core::api {
             size * type_size,
             buffer_usage,
             VmaMemoryUsage::VMA_MEMORY_USAGE_CPU_ONLY,
-            VmaAllocationCreateFlagBits::VMA_ALLOCATION_CREATE_WITHIN_BUDGET_BIT,
+            {},
             *ctx);
 
         vmaMapMemory(ctx->allocator, buffer.allocation, &mapped);

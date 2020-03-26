@@ -16,7 +16,7 @@ namespace caelus::core::components {
     }
 
     void Texture::load(const std::filesystem::path& path) {
-        i32 width{}, height{}, channels{};
+        i32 width{}, height{}, channels = 4;
 
         if (!std::ifstream(path).is_open()) {
             throw std::runtime_error("File not found error at: " + path.generic_string());

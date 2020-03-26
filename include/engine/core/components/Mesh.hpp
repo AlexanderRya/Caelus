@@ -18,6 +18,7 @@ namespace caelus::core::components {
 
     [[nodiscard]] std::vector<Vertex> generate_triangle_geometry();
     [[nodiscard]] std::vector<Vertex> generate_quad_geometry();
+    [[nodiscard]] std::vector<Vertex> generate_cube_geometry();
 }
 
 #endif //CAELUS_MESH_HPP

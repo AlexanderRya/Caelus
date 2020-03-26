@@ -1,6 +1,6 @@
-#include <engine/core/api/VertexBuffer.hpp>
 #include <engine/core/api/VulkanContext.hpp>
 #include <engine/core/api/CommandBuffer.hpp>
+#include <engine/core/api/VertexBuffer.hpp>
 #include <engine/core/api/Device.hpp>
 #include <engine/core/api/Buffer.hpp>
 
