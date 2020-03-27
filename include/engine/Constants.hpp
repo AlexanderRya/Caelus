@@ -9,7 +9,8 @@ namespace caelus::meta {
     enum class PipelineBinding : u32 {
         eCamera = 0,
         eInstance = 1,
-        eMaterial = 2
+        eMaterial = 2,
+        eTexture = 3
     };
 
     enum class PipelineType {

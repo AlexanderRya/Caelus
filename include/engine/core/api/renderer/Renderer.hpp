@@ -39,7 +39,8 @@ namespace caelus::core::api {
 
         void build(RenderGraph&);
         void update_camera(RenderGraph&);
-        void update_transforms(components::Mesh& mesh, components::Transform& transform);
+        void update_transforms(components::Mesh&, components::Transform&);
+        void update_materials(components::Mesh&, components::Material&);
 
         // Drawing
         u32 acquire_frame();

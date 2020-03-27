@@ -14,6 +14,7 @@ namespace caelus::core::components {
 
         api::DescriptorSet descriptor_set;
         api::MappedBuffer instance_buffer;
+        api::MappedBuffer material_buffer;
     };
 
     [[nodiscard]] std::vector<Vertex> generate_triangle_geometry();

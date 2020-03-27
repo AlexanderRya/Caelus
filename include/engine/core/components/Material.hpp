@@ -3,9 +3,16 @@
 
 #include <engine/Types.hpp>
 
+#include <glm/vec4.hpp>
+
 namespace caelus::core::components {
     struct Material {
-        u32 texture_idx;
+        struct alignas(16) Instance {
+            glm::vec4 color;
+            i32 texture_idx;
+        };
+
+        std::vector<Instance> materials;
     };
 } // namespace caelus::core::components
 

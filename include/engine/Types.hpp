@@ -30,6 +30,7 @@ namespace caelus {
 
     struct Vertex {
         glm::vec3 pos;
+        glm::vec3 normals;
         glm::vec2 uvs;
     };
 } // namespace game

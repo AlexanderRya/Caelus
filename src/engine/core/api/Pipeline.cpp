@@ -31,7 +31,7 @@ namespace caelus::core::api {
     PipelineLayout make_generic_pipeline_layout(const VulkanContext& ctx) {
         PipelineLayout layout;
 
-        std::array<vk::DescriptorSetLayoutBinding, 3> layout_bindings{}; {
+        std::array<vk::DescriptorSetLayoutBinding, 4> layout_bindings{}; {
             layout_bindings[0].descriptorCount = 1;
             layout_bindings[0].descriptorType = vk::DescriptorType::eUniformBuffer;
             layout_bindings[0].binding = static_cast<u32>(meta::PipelineBinding::eCamera);
@@ -42,16 +42,22 @@ namespace caelus::core::api {
             layout_bindings[1].binding = static_cast<u32>(meta::PipelineBinding::eInstance);
             layout_bindings[1].stageFlags = vk::ShaderStageFlagBits::eVertex;
 
-            layout_bindings[2].descriptorCount = 128;
-            layout_bindings[2].descriptorType = vk::DescriptorType::eCombinedImageSampler;
+            layout_bindings[2].descriptorCount = 1;
+            layout_bindings[2].descriptorType = vk::DescriptorType::eStorageBuffer;
             layout_bindings[2].binding = static_cast<u32>(meta::PipelineBinding::eMaterial);
             layout_bindings[2].stageFlags = vk::ShaderStageFlagBits::eFragment;
+
+            layout_bindings[3].descriptorCount = 128;
+            layout_bindings[3].descriptorType = vk::DescriptorType::eCombinedImageSampler;
+            layout_bindings[3].binding = static_cast<u32>(meta::PipelineBinding::eTexture);
+            layout_bindings[3].stageFlags = vk::ShaderStageFlagBits::eFragment;
         }
 
-        std::array<vk::DescriptorBindingFlags, 3> binding_flags{}; {
+        std::array<vk::DescriptorBindingFlags, 4> binding_flags{}; {
             binding_flags[0] = {};
             binding_flags[1] = {};
-            binding_flags[2] = vk::DescriptorBindingFlagBits::eVariableDescriptorCount | vk::DescriptorBindingFlagBits::ePartiallyBound;
+            binding_flags[2] = {};
+            binding_flags[3] = vk::DescriptorBindingFlagBits::eVariableDescriptorCount | vk::DescriptorBindingFlagBits::ePartiallyBound;
         }
 
         vk::DescriptorSetLayoutBindingFlagsCreateInfo binding_flags_info{}; {
@@ -67,17 +73,11 @@ namespace caelus::core::api {
 
         layout.set = ctx.device.logical.createDescriptorSetLayout(set_layout_create_info, nullptr, ctx.dispatcher);
 
-        vk::PushConstantRange sampler_index{}; {
-            sampler_index.offset = 0;
-            sampler_index.size = 1 * sizeof(u32);
-            sampler_index.stageFlags = vk::ShaderStageFlagBits::eFragment;
-        }
-
         vk::PipelineLayoutCreateInfo layout_create_info{}; {
             layout_create_info.setLayoutCount = 1;
             layout_create_info.pSetLayouts = &layout.set;
-            layout_create_info.pushConstantRangeCount = 1;
-            layout_create_info.pPushConstantRanges = &sampler_index;
+            layout_create_info.pushConstantRangeCount = 0;
+            layout_create_info.pPushConstantRanges = nullptr;
         }
 
         layout.pipeline = ctx.device.logical.createPipelineLayout(layout_create_info, nullptr, ctx.dispatcher);
@@ -126,16 +126,21 @@ namespace caelus::core::api {
             vertex_bindings[0].inputRate = vk::VertexInputRate::eVertex;
         }
 
-        std::array<vk::VertexInputAttributeDescription, 2> vertex_attributes{}; {
+        std::array<vk::VertexInputAttributeDescription, 3> vertex_attributes{}; {
             vertex_attributes[0].binding = 0;
             vertex_attributes[0].format = vk::Format::eR32G32B32Sfloat;
             vertex_attributes[0].location = 0;
             vertex_attributes[0].offset = offsetof(Vertex, pos);
 
             vertex_attributes[1].binding = 0;
-            vertex_attributes[1].format = vk::Format::eR32G32Sfloat;
+            vertex_attributes[1].format = vk::Format::eR32G32B32Sfloat;
             vertex_attributes[1].location = 1;
-            vertex_attributes[1].offset = offsetof(Vertex, uvs);
+            vertex_attributes[1].offset = offsetof(Vertex, normals);
+
+            vertex_attributes[2].binding = 0;
+            vertex_attributes[2].format = vk::Format::eR32G32Sfloat;
+            vertex_attributes[2].location = 2;
+            vertex_attributes[2].offset = offsetof(Vertex, uvs);
         }
 
         vk::PipelineVertexInputStateCreateInfo vertex_input_info{}; {

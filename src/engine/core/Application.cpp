@@ -46,14 +46,28 @@ namespace caelus::core {
                 .instances = {
                     components::Transform::Instance{
                         .position = { 0.0f, 0.0f, 0.0f },
-                        .scale = { 1.0f, 1.0f, 1.0f },
+                        .scale = { 0.5f, 0.5f, 0.5f },
+                        .rotation = 0
+                    },
+                    components::Transform::Instance{
+                        .position = { 2.2f, 2.0f, 3.0f },
+                        .scale = { 0.2f, 0.2f, 0.2f },
                         .rotation = 0
                     }
                 }
             });
 
             graph.registry.emplace<components::Material>(quad, components::Material{
-                .texture_idx = 0
+                .materials = {
+                    components::Material::Instance{
+                        .color = { 1.0f, 1.0f, 1.0f, 1.0f },
+                        .texture_idx = 0
+                    },
+                    components::Material::Instance{
+                        .color = { 1.0f, 1.0f, 1.0f, 1.0f },
+                        .texture_idx = -1
+                    },
+                }
             });
         }
 
