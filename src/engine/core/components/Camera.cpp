@@ -4,8 +4,8 @@
 
 namespace caelus::core::components {
     Camera::Camera() noexcept
-    : yaw(-90.0f),
-      pitch(0.0f) {
+        : yaw(-90.0f),
+        pitch(0.0f) {
         update();
     }
 

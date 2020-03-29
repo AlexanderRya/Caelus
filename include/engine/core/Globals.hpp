@@ -2,6 +2,7 @@
 #define CAELUS_GLOBALS_HPP
 
 #include <engine/Forwards.hpp>
+#include <engine/Types.hpp>
 
 namespace caelus::core {
     extern components::Camera camera;

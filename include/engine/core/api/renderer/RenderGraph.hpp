@@ -4,6 +4,7 @@
 #include <engine/core/api/MappedBuffer.hpp>
 #include <engine/core/api/Pipeline.hpp>
 #include <engine/Constants.hpp>
+#include <engine/Forwards.hpp>
 
 #include <entt/entt.hpp>
 
@@ -16,7 +17,6 @@ namespace caelus::core::api {
         std::unordered_map<meta::SamplerType, vk::Sampler> samplers;
         std::vector<components::Texture> textures;
 
-        std::vector<entt::entity> objects;
         entt::registry registry;
 
         api::MappedBuffer camera_buffer{};

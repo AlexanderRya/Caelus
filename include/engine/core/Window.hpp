@@ -8,8 +8,8 @@ namespace caelus::core {
     class Window {
         GLFWwindow* window{};
     public:
-        static inline bool resized = true;
         static inline i32 width{}, height{};
+        static inline bool captured = false;
 
         Window(const i32, const i32, const char*);
 

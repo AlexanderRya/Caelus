@@ -1,8 +1,8 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
-#include <engine/core/components/Camera.hpp>
 #include <engine/core/api/VulkanContext.hpp>
+#include <engine/core/components/Camera.hpp>
 #include <engine/core/Globals.hpp>
 #include <engine/core/Window.hpp>
 #include <engine/Logger.hpp>
@@ -35,26 +35,43 @@ namespace caelus::core {
             throw std::runtime_error("Failed window creation");
         }
 
+        glfwSetMouseButtonCallback(window, [](GLFWwindow* win, const int button, const int action, const int) {
+            if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+                if (!captured) {
+                    glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                }
+
+                captured = true;
+            } else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
+                if (captured) {
+                    glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+                }
+
+                captured = false;
+            }
+        });
+
         glfwSetCursorPosCallback(window, [](GLFWwindow*, const double xpos, const double ypos) {
             static double lastX = width / 2.0, lastY = height / 2.0;
             static bool first = true;
 
-            if (first) {
+            if (captured) {
+                if (first) {
+                    lastX = xpos;
+                    lastY = ypos;
+                    first = false;
+                }
+
+                double xoffset = xpos - lastX;
+                double yoffset = lastY - ypos;
+
                 lastX = xpos;
                 lastY = ypos;
-                first = false;
+
+                camera.process(xoffset, yoffset);
             }
-
-            double xoffset = xpos - lastX;
-            double yoffset = lastY - ypos;
-
-            lastX = xpos;
-            lastY = ypos;
-
-            camera.process(xoffset, yoffset);
         });
 
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
         logger::info("Window successfully created with size: ", width, "x", height);
     }

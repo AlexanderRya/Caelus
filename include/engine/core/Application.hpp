@@ -9,6 +9,8 @@
 #include <engine/core/Window.hpp>
 #include <engine/Forwards.hpp>
 
+#include <entt/entt.hpp>
+
 #include <unordered_map>
 
 namespace caelus::core {

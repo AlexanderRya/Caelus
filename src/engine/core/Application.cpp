@@ -8,6 +8,7 @@
 #include <engine/core/Globals.hpp>
 
 #include <entt/entt.hpp>
+#include <GLFW/glfw3.h>
 
 #include <iostream>
 #include <fstream>
@@ -36,7 +37,7 @@ namespace caelus::core {
     }
 
     void Application::run() {
-        auto& quad = graph.objects.emplace_back(graph.registry.create()); {
+        auto quad = graph.registry.create(); {
             graph.registry.emplace<components::Mesh>(quad, components::Mesh{
                 .vertex_buffer_idx = 2,
                 .vertex_count = 36,
@@ -58,16 +59,12 @@ namespace caelus::core {
             });
 
             graph.registry.emplace<components::Material>(quad, components::Material{
-                .materials = {
-                    components::Material::Instance{
-                        .color = { 1.0f, 1.0f, 1.0f, 1.0f },
-                        .texture_idx = 0
-                    },
-                    components::Material::Instance{
-                        .color = { 1.0f, 1.0f, 1.0f, 1.0f },
-                        .texture_idx = -1
-                    },
-                }
+                .instance = {
+                    .color = { 1.0f, 1.0f, 1.0f, 1.0f },
+                    .texture_idx = -1
+                },
+
+                .pipeline = graph.pipelines[meta::PipelineType::eMeshGeneric].handle
             });
         }
 
@@ -82,7 +79,9 @@ namespace caelus::core {
                 window.close();
             }
 
-            camera.move(window);
+            if (Window::captured) {
+                camera.move(window);
+            }
 
             window.poll_events();
 

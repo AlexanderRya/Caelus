@@ -57,14 +57,14 @@ set(CAELUS_HEADERS
         include/engine/core/api/DescriptorSet.hpp
         include/engine/Constants.hpp
         include/engine/core/api/MappedBuffer.hpp
-        include/engine/core/components/Camera.hpp
         include/engine/core/Globals.hpp
         include/engine/core/components/Texture.hpp
         include/engine/core/api/Image.hpp
         include/engine/core/api/Sampler.hpp
         include/engine/core/components/Mesh.hpp
         include/engine/core/api/renderer/RenderGraph.hpp
-        include/engine/core/components/Transform.hpp include/engine/core/components/Material.hpp)
+        include/engine/core/components/Transform.hpp
+        include/engine/core/components/Material.hpp include/engine/core/components/Camera.hpp)
 
 set(CAELUS_SOURCES
         ${STB_SOURCES}
@@ -88,12 +88,12 @@ set(CAELUS_SOURCES
         src/engine/core/api/DescriptorSet.cpp
         src/engine/core/api/MappedBuffer.cpp
         src/engine/core/api/VulkanMemoryAllocator.cpp
-        src/engine/core/components/Camera.cpp
         src/engine/core/api/Image.cpp
         src/engine/core/components/Texture.cpp
         src/engine/core/api/Sampler.cpp
         src/engine/core/components/Mesh.cpp
-        src/engine/core/Globals.cpp src/engine/core/components/Transform.cpp)
+        src/engine/core/Globals.cpp
+        src/engine/core/components/Transform.cpp src/engine/core/components/Camera.cpp)
 
 add_executable(Caelus
         ${CAELUS_HEADERS}

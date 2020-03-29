@@ -38,6 +38,7 @@ namespace caelus::core::api {
         explicit Renderer(const VulkanContext&);
 
         void build(RenderGraph&);
+
         void update_camera(RenderGraph&);
         void update_transforms(components::Mesh&, components::Transform&);
         void update_materials(components::Mesh&, components::Material&);

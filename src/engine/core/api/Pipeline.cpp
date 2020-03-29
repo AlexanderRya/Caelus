@@ -43,7 +43,7 @@ namespace caelus::core::api {
             layout_bindings[1].stageFlags = vk::ShaderStageFlagBits::eVertex;
 
             layout_bindings[2].descriptorCount = 1;
-            layout_bindings[2].descriptorType = vk::DescriptorType::eStorageBuffer;
+            layout_bindings[2].descriptorType = vk::DescriptorType::eUniformBuffer;
             layout_bindings[2].binding = static_cast<u32>(meta::PipelineBinding::eMaterial);
             layout_bindings[2].stageFlags = vk::ShaderStageFlagBits::eFragment;
 
@@ -243,7 +243,7 @@ namespace caelus::core::api {
 
         Pipeline pipeline{}; {
             pipeline.handle = info.ctx->device.logical.createGraphicsPipeline(nullptr, pipeline_info, nullptr, info.ctx->dispatcher);
-            pipeline.layout.pipeline = info.layout.pipeline;
+            pipeline.layout = info.layout;
         }
 
         logger::info("Generic pipeline successfully created");
