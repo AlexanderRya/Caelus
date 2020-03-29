@@ -20,7 +20,11 @@ set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
-set(CMAKE_CXX_STANDARD 20)
+if (WIN32)
+    set(CMAKE_CXX_STANDARD 17)
+elseif (UNIX)
+    set(CMAKE_CXX_STANDARD 20)
+endif()
 
 set(STB_HEADERS
         external/stb/stb.h
@@ -64,7 +68,8 @@ set(CAELUS_HEADERS
         include/engine/core/components/Mesh.hpp
         include/engine/core/api/renderer/RenderGraph.hpp
         include/engine/core/components/Transform.hpp
-        include/engine/core/components/Material.hpp include/engine/core/components/Camera.hpp)
+        include/engine/core/components/Material.hpp
+        include/engine/core/components/Camera.hpp)
 
 set(CAELUS_SOURCES
         ${STB_SOURCES}
@@ -93,7 +98,8 @@ set(CAELUS_SOURCES
         src/engine/core/api/Sampler.cpp
         src/engine/core/components/Mesh.cpp
         src/engine/core/Globals.cpp
-        src/engine/core/components/Transform.cpp src/engine/core/components/Camera.cpp)
+        src/engine/core/components/Transform.cpp
+        src/engine/core/components/Camera.cpp)
 
 add_executable(Caelus
         ${CAELUS_HEADERS}
