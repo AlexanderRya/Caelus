@@ -1,3 +1,4 @@
+#include <engine/core/components/PointLight.hpp>
 #include <engine/core/components/Transform.hpp>
 #include <engine/core/components/Material.hpp>
 #include <engine/core/components/Texture.hpp>
@@ -10,7 +11,6 @@
 #include <entt/entt.hpp>
 #include <GLFW/glfw3.h>
 
-#include <iostream>
 #include <fstream>
 
 namespace caelus::core {
@@ -20,55 +20,90 @@ namespace caelus::core {
       renderer(context) {}
 
     void Application::load() {
-        graph.layouts[meta::PipelineLayoutType::eMeshGeneric] = api::make_generic_pipeline_layout(context);
+        scene.layouts[meta::PipelineLayoutType::eMeshGeneric] = api::make_generic_pipeline_layout(context);
 
-        graph.samplers[meta::SamplerType::eDefault] = api::make_default_sampler(context);
+        scene.samplers[meta::SamplerType::eDefault] = api::make_default_sampler(context);
 
         api::Pipeline::CreateInfo create_info{}; {
             create_info.ctx = &context;
             create_info.vertex_path = "../resources/shaders/generic.vert.spv";
             create_info.fragment_path = "../resources/shaders/generic.frag.spv";
-            create_info.layout = graph.layouts[meta::PipelineLayoutType::eMeshGeneric];
+            create_info.layout = scene.layouts[meta::PipelineLayoutType::eMeshGeneric];
         }
 
-        graph.pipelines[meta::PipelineType::eMeshGeneric] = api::make_generic_pipeline(create_info);
+        scene.pipelines[meta::PipelineType::eMeshGeneric] = api::make_generic_pipeline(create_info);
 
-        graph.textures.emplace_back(context, graph.samplers[meta::SamplerType::eDefault]).load("../resources/textures/dirt.jpg");
+        scene.textures.emplace_back(context, scene.samplers[meta::SamplerType::eDefault]).load("../resources/textures/dirt.jpg");
     }
 
     void Application::run() {
-        auto quad = graph.registry.create(); {
-            graph.registry.emplace<components::Mesh>(quad, components::Mesh{
+        auto orange_cube = scene.registry.create(); {
+            scene.registry.emplace<components::Mesh>(orange_cube, components::Mesh{
                 .vertex_buffer_idx = 2,
                 .vertex_count = 36,
             });
 
-            graph.registry.emplace<components::Transform>(quad, components::Transform{
+            scene.registry.emplace<components::Transform>(orange_cube, components::Transform{
                 .instances = {
                     components::Transform::Instance{
                         .position = { 0.0f, 0.0f, 0.0f },
                         .scale = { 0.5f, 0.5f, 0.5f },
                         .rotation = 0
-                    },
+                    }
+                }
+            });
+
+            scene.registry.emplace<components::Material>(orange_cube, components::Material{
+                .instance = {
+                    .color = { 1.0f, 0.5f, 0.31f, 1.0f },
+                    .texture_idx = -1
+                },
+
+                .pipeline = scene.pipelines[meta::PipelineType::eMeshGeneric].handle
+            });
+        }
+
+        auto light = scene.registry.create(); {
+            scene.registry.emplace<components::PointLight>(light);
+
+            scene.registry.emplace<components::Transform>(light, components::Transform{
+                .instances = {
                     components::Transform::Instance{
-                        .position = { 2.2f, 2.0f, 3.0f },
+                        .position = { 4.2f, 3.0f, 5.0f },
+                        .scale = { 0.2f, 0.2f, 0.2f },
+                        .rotation = 0
+                    }
+                }
+            });
+        }
+
+        auto white_cube = scene.registry.create(); {
+            scene.registry.emplace<components::Mesh>(white_cube, components::Mesh{
+                .vertex_buffer_idx = 2,
+                .vertex_count = 36,
+            });
+
+            scene.registry.emplace<components::Transform>(white_cube, components::Transform{
+                .instances = {
+                    components::Transform::Instance{
+                        .position = { 4.2f, 3.0f, 5.0f },
                         .scale = { 0.2f, 0.2f, 0.2f },
                         .rotation = 0
                     }
                 }
             });
 
-            graph.registry.emplace<components::Material>(quad, components::Material{
+            scene.registry.emplace<components::Material>(white_cube, components::Material{
                 .instance = {
                     .color = { 1.0f, 1.0f, 1.0f, 1.0f },
                     .texture_idx = -1
                 },
 
-                .pipeline = graph.pipelines[meta::PipelineType::eMeshGeneric].handle
+                .pipeline = scene.pipelines[meta::PipelineType::eMeshGeneric].handle
             });
         }
 
-        renderer.build(graph);
+        renderer.build(scene);
 
         while (!window.should_close()) {
             const f32 frame_time = glfwGetTime();
@@ -89,7 +124,7 @@ namespace caelus::core {
             renderer.acquire_frame();
 
             renderer.start(); {
-                renderer.draw(graph);
+                renderer.draw(scene);
             } renderer.end();
 
             renderer.submit();

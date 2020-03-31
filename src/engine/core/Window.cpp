@@ -12,11 +12,11 @@
 namespace caelus::core {
     Window::Window(const i32 w, const i32 h, const char* title) {
         glfwSetErrorCallback([](const i32 code, const char* message) {
-            std::cout << util::format(
+            util::print(util::format(
                 "[{}] [GLFW3] [Error: {}]: {}\n",
                 util::get_current_timestamp(),
                 code,
-                message);
+                message));
         });
 
         if (!glfwInit()) {

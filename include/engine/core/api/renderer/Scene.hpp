@@ -1,5 +1,5 @@
-#ifndef CAELUS_RENDERGRAPH_HPP
-#define CAELUS_RENDERGRAPH_HPP
+#ifndef CAELUS_SCENE_HPP
+#define CAELUS_SCENE_HPP
 
 #include <engine/core/api/MappedBuffer.hpp>
 #include <engine/core/api/Pipeline.hpp>
@@ -11,7 +11,7 @@
 #include <vector>
 
 namespace caelus::core::api {
-    struct RenderGraph {
+    struct Scene {
         std::unordered_map<meta::PipelineType, api::Pipeline> pipelines;
         std::unordered_map<meta::PipelineLayoutType, api::PipelineLayout> layouts;
         std::unordered_map<meta::SamplerType, vk::Sampler> samplers;
@@ -23,4 +23,4 @@ namespace caelus::core::api {
     };
 } // namespace caelus::core::api
 
-#endif //CAELUS_RENDERGRAPH_HPP
+#endif //CAELUS_SCENE_HPP

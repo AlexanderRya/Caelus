@@ -2,7 +2,6 @@
 #include <engine/core/api/CommandBuffer.hpp>
 #include <engine/core/api/Buffer.hpp>
 #include <engine/core/api/Image.hpp>
-#include <iostream>
 
 namespace caelus::core::api {
     Image make_image(const Image::CreateInfo& info) {
@@ -37,7 +36,7 @@ namespace caelus::core::api {
 
         vmaCreateImage(
             info.ctx->allocator,
-            reinterpret_cast<VkImageCreateInfo*>(&image_info),
+            &static_cast<VkImageCreateInfo&>(image_info),
             &allocation_create_info,
             reinterpret_cast<VkImage*>(&image.handle),
             &image.allocation,

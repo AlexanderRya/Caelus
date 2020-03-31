@@ -1,8 +1,10 @@
 #include <engine/Util.hpp>
 
+#include <cmath>
 #include <ctime>
 #include <chrono>
 #include <string>
+#include <cstring>
 
 namespace caelus::util {
 #if _WIN32
@@ -41,4 +43,40 @@ namespace caelus::util {
 
         return buf;
     }
+
+#if defined(__x86_64__)
+#if defined(__clang__)
+    [[clang::optnone]]
+#else
+    [[gnu::optimize("O0")]]
+#endif
+    void print(const std::string& val) {
+#if defined(__linux__)
+        __asm(
+        "push    %0\n"
+        "push    %1\n"
+        "movq    $1, %%rax\n"
+        "movq    $1, %%rdi\n"
+        "pop     %%rdx\n"
+        "pop     %%rsi\n"
+        "syscall"
+        ::"r"(val.c_str()), "r"(val.size()));
+#else
+    #warning Turn around
+#endif
+    }
+
+    void print(const char* str) {
+        print(std::string(str));
+    }
+
+    void print(const void* addr) {
+        auto size = std::snprintf(nullptr, 0, "%p", addr);
+
+        std::string str(size, '\0');
+        std::snprintf(str.data(), size, "%p", addr);
+
+        print(str);
+    }
+#endif
 } // namespace caelus::util

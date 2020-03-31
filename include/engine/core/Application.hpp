@@ -1,7 +1,7 @@
 #ifndef CAELUS_CAELUS_HPP
 #define CAELUS_CAELUS_HPP
 
-#include <engine/core/api/renderer/RenderGraph.hpp>
+#include <engine/core/api/renderer/Scene.hpp>
 #include <engine/core/api/renderer/Renderer.hpp>
 #include <engine/core/components/Texture.hpp>
 #include <engine/core/api/VulkanContext.hpp>
@@ -19,7 +19,7 @@ namespace caelus::core {
         api::VulkanContext context;
         api::Renderer renderer;
 
-        api::RenderGraph graph;
+        api::Scene scene;
     public:
         Application();
         ~Application();

@@ -64,6 +64,14 @@ namespace caelus::util {
     }
 
     [[nodiscard]] std::string get_current_timestamp();
+    void print(const std::string&);
+    void print(const char*);
+    void print(const void* addr);
+
+    template <typename Ty, std::enable_if_t<std::is_arithmetic_v<Ty>>* = nullptr>
+    void print(const Ty val) {
+        print(std::to_string(val));
+    }
 } // namespace game::util
 
 #endif //CAELUS_UTIL_HPP

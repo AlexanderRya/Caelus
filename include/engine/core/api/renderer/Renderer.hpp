@@ -1,7 +1,7 @@
 #ifndef CAELUS_RENDERER_HPP
 #define CAELUS_RENDERER_HPP
 
-#include <engine/core/api/renderer/RenderGraph.hpp>
+#include <engine/core/api/renderer/Scene.hpp>
 #include <engine/core/components/Transform.hpp>
 #include <engine/core/components/Texture.hpp>
 #include <engine/core/api/DescriptorSet.hpp>
@@ -29,24 +29,24 @@ namespace caelus::core::api {
 
         // Drawing stuff
         std::vector<api::Buffer> vertex_buffers;
-
-        u32 frames_rendered{};
         u32 image_index{};
         u32 current_frame{};
 
-    public:
-        explicit Renderer(const VulkanContext&);
-
-        void build(RenderGraph&);
-
-        void update_camera(RenderGraph&);
+        void update_camera(Scene&);
         void update_transforms(components::Mesh&, components::Transform&);
         void update_materials(components::Mesh&, components::Material&);
+    public:
+        static inline u32 frames_rendered{};
+
+        explicit Renderer(const VulkanContext&);
+
+        void allocate(const Scene&, components::Mesh&);
+        void build(Scene&);
 
         // Drawing
         u32 acquire_frame();
         void start();
-        void draw(RenderGraph&);
+        void draw(Scene&);
         void end();
         void submit();
     };

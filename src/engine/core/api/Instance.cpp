@@ -7,8 +7,6 @@
 #include <vulkan/vulkan.hpp>
 #include <GLFW/glfw3.h>
 
-#include <iostream>
-
 namespace caelus::core::api {
     static std::string get_message_type(const VkDebugUtilsMessageTypeFlagsEXT& type) {
         switch (type) {
@@ -60,12 +58,12 @@ namespace caelus::core::api {
         const VkDebugUtilsMessengerCallbackDataEXT* callback_data,
         void*) {
 
-        std::cout << util::format(
+        util::print(util::format(
             "[{}] [Vulkan] [{}/{}]: {}\n",
             util::get_current_timestamp(),
             get_message_severity(message_severity),
             get_message_type(message_type),
-            callback_data->pMessage);
+            callback_data->pMessage));
 
         if (message_severity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
             throw std::runtime_error("Validation layer error");

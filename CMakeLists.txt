@@ -62,9 +62,9 @@ set(CAELUS_HEADERS
         include/engine/core/api/Image.hpp
         include/engine/core/api/Sampler.hpp
         include/engine/core/components/Mesh.hpp
-        include/engine/core/api/renderer/RenderGraph.hpp
+        include/engine/core/api/renderer/Scene.hpp
         include/engine/core/components/Transform.hpp
-        include/engine/core/components/Material.hpp include/engine/core/components/Camera.hpp)
+        include/engine/core/components/Material.hpp include/engine/core/components/Camera.hpp include/engine/core/components/PointLight.hpp)
 
 set(CAELUS_SOURCES
         ${STB_SOURCES}
