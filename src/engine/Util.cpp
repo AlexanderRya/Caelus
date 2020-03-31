@@ -52,7 +52,7 @@ namespace caelus::util {
 #endif
     void print(const std::string& val) {
 #if defined(__linux__)
-        __asm(
+        __asm volatile(
         "push    %0\n"
         "push    %1\n"
         "movq    $1, %%rax\n"
@@ -63,6 +63,8 @@ namespace caelus::util {
         ::"r"(val.c_str()), "r"(val.size()));
 #else
     #warning Turn around
+        auto stdout_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+        WriteFile(stdout_handle, val.c_str(), val.size(), nullptr, false);
 #endif
     }
 
