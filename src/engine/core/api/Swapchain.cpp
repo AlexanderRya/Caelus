@@ -49,8 +49,8 @@ namespace caelus::core::api {
             }
         }
 
-        logger::info("Swapchain details: non-preferred format: vk::Format::", vk::to_string(format.format));
-        logger::info("Swapchain details: non-preferred color space: vk::ColorSpaceKHR::", vk::to_string(format.colorSpace));
+        logger::warning("Swapchain details: non-preferred format: vk::Format::", vk::to_string(format.format));
+        logger::warning("Swapchain details: non-preferred color space: vk::ColorSpaceKHR::", vk::to_string(format.colorSpace));
 
         return format;
     }
