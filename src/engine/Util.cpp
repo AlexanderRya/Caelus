@@ -53,16 +53,16 @@ namespace caelus::util {
     void print(const std::string& val) {
 #if defined(__linux__)
         __asm volatile(
-            "push    %0\n"
-            "push    %1\n"
-            "movq    $1, %%rax\n"
-            "movq    $1, %%rdi\n"
-            "pop     %%rdx\n"
-            "pop     %%rsi\n"
-            "syscall"
+        "push    %0\n"
+        "push    %1\n"
+        "movq    $1, %%rax\n"
+        "movq    $1, %%rdi\n"
+        "pop     %%rdx\n"
+        "pop     %%rsi\n"
+        "syscall"
         ::"r"(val.c_str()), "r"(val.size()));
 #else
-        #warning Turn around
+    #warning Turn around
         auto stdout_handle = GetStdHandle(STD_OUTPUT_HANDLE);
         WriteFile(stdout_handle, val.c_str(), val.size(), nullptr, false);
 #endif
