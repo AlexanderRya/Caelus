@@ -37,20 +37,16 @@ namespace caelus::core {
     }
 
     void Application::run() {
-        auto orange_cube = scene.registry.create(); {
+        auto orange_cube = scene.entities.emplace_back(scene.registry.create()); {
             scene.registry.emplace<components::Mesh>(orange_cube, components::Mesh{
                 .vertex_buffer_idx = 2,
                 .vertex_count = 36,
             });
 
             scene.registry.emplace<components::Transform>(orange_cube, components::Transform{
-                .instances = {
-                    components::Transform::Instance{
-                        .position = { 0.0f, 0.0f, 0.0f },
-                        .scale = { 0.5f, 0.5f, 0.5f },
-                        .rotation = 0
-                    }
-                }
+                .position = { 0.0f, 0.0f, 0.0f },
+                .scale = { 0.5f, 0.5f, 0.5f },
+                .rotation = 0
             });
 
             scene.registry.emplace<components::Material>(orange_cube, components::Material{
@@ -63,34 +59,26 @@ namespace caelus::core {
             });
         }
 
-        auto light = scene.registry.create(); {
+        auto light = scene.entities.emplace_back(scene.registry.create()) = scene.registry.create(); {
             scene.registry.emplace<components::PointLight>(light);
 
             scene.registry.emplace<components::Transform>(light, components::Transform{
-                .instances = {
-                    components::Transform::Instance{
-                        .position = { 4.2f, 3.0f, 5.0f },
-                        .scale = { 0.2f, 0.2f, 0.2f },
-                        .rotation = 0
-                    }
-                }
+                .position = { 4.2f, 3.0f, 5.0f },
+                .scale = { 0.2f, 0.2f, 0.2f },
+                .rotation = 0
             });
         }
 
-        auto white_cube = scene.registry.create(); {
+        auto white_cube = scene.entities.emplace_back(scene.registry.create()); {
             scene.registry.emplace<components::Mesh>(white_cube, components::Mesh{
                 .vertex_buffer_idx = 2,
                 .vertex_count = 36,
             });
 
             scene.registry.emplace<components::Transform>(white_cube, components::Transform{
-                .instances = {
-                    components::Transform::Instance{
-                        .position = { 4.2f, 3.0f, 5.0f },
-                        .scale = { 0.2f, 0.2f, 0.2f },
-                        .rotation = 0
-                    }
-                }
+                .position = { 4.2f, 3.0f, 5.0f },
+                .scale = { 0.2f, 0.2f, 0.2f },
+                .rotation = 0
             });
 
             scene.registry.emplace<components::Material>(white_cube, components::Material{

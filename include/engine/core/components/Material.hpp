@@ -2,6 +2,7 @@
 #define CAELUS_MATERIAL_HPP
 
 #include <engine/Types.hpp>
+#include <engine/Util.hpp>
 
 #include <vulkan/vulkan.hpp>
 

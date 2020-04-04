@@ -3,6 +3,8 @@
 
 #include <engine/Types.hpp>
 
+#include <glm/vec4.hpp>
+
 #include <string>
 #include <sstream>
 #include <utility>
@@ -72,6 +74,32 @@ namespace caelus::util {
     void print(const Ty val) {
         print(std::to_string(val));
     }
-} // namespace game::util
+
+    template <typename Ty>
+    static inline void hash_combine(usize& seed, const Ty& v) {
+        std::hash<Ty> hasher{};
+        seed ^= hasher(v) + 0x9e3779b9 + (seed << 6u) + (seed >> 2u);
+    }
+
+    template <typename Ty, typename... Rest>
+    inline void hash_combine(usize& seed, const Ty& v, Rest... rest) {
+        std::hash<Ty> hasher{};
+        seed ^= hasher(v) + 0x9e3779b9 + (seed << 6u) + (seed >> 2u);
+        (hash_combine(seed, rest), ...);
+    }
+} // namespace caelus::util
+
+namespace std {
+    template <>
+    struct hash<glm::vec4> {
+        caelus::usize operator ()(const glm::vec4& v) const noexcept {
+            caelus::usize id{};
+
+            caelus::util::hash_combine(id, v.x, v.y, v.z, v.w);
+
+            return id;
+        }
+    };
+} // namespace std
 
 #endif //CAELUS_UTIL_HPP

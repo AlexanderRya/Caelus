@@ -11,15 +11,11 @@ namespace caelus::core::components {
     struct Mesh {
         usize vertex_buffer_idx{};
         u64 vertex_count{};
-
-        api::DescriptorSet descriptor_set{};
-        api::MappedBuffer instance_buffer{};
-        api::MappedBuffer material_buffer{};
     };
 
     [[nodiscard]] std::vector<Vertex> generate_triangle_geometry();
     [[nodiscard]] std::vector<Vertex> generate_quad_geometry();
     [[nodiscard]] std::vector<Vertex> generate_cube_geometry();
-}
+} // namespace caelus::core::components
 
 #endif //CAELUS_MESH_HPP

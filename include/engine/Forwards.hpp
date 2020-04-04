@@ -38,6 +38,8 @@ namespace caelus::core::components {
     struct Material;
     class Texture;
     class Camera;
+    struct Mesh;
+    struct Transform;
 } // namespace caelus::core::components
 
 #endif //CAELUS_FORWARDS_HPP

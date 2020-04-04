@@ -17,7 +17,8 @@ namespace caelus::core::api {
         std::unordered_map<meta::SamplerType, vk::Sampler> samplers;
         std::vector<components::Texture> textures;
 
-        entt::registry registry;
+        std::vector<entt::entity> entities{};
+        entt::registry registry{};
 
         api::MappedBuffer camera_buffer{};
     };

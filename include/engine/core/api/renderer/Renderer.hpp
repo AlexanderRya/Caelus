@@ -19,6 +19,16 @@
 
 namespace caelus::core::api {
     class Renderer {
+        struct DrawCommand {
+            const components::Mesh* mesh{};
+            const components::Material* material{};
+            usize transform_id{};
+
+            api::DescriptorSet descriptor_set{};
+            api::MappedBuffer instance_buffer{};
+            api::MappedBuffer material_buffer{};
+        };
+
         std::vector<vk::Semaphore> image_available;
         std::vector<vk::Semaphore> render_finished;
         std::vector<vk::Fence> frames_in_flight;
@@ -29,18 +39,20 @@ namespace caelus::core::api {
 
         // Drawing stuff
         std::vector<api::Buffer> vertex_buffers;
+        std::vector<DrawCommand> draw_commands;
+        std::unordered_map<usize, std::vector<glm::mat4>> transform_data;
+
         u32 image_index{};
         u32 current_frame{};
 
         void update_camera(Scene&);
-        void update_transforms(components::Mesh&, components::Transform&);
-        void update_materials(components::Mesh&, components::Material&);
+        void update_transforms(DrawCommand&);
+        void update_materials(DrawCommand&);
     public:
         static inline u32 frames_rendered{};
 
         explicit Renderer(const VulkanContext&);
 
-        void allocate(const Scene&, components::Mesh&);
         void build(Scene&);
 
         // Drawing

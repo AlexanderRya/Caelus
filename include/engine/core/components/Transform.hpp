@@ -8,17 +8,11 @@
 
 namespace caelus::core::components {
     struct Transform {
-        struct Instance {
-            glm::vec3 position;
-            glm::vec3 scale;
-            float rotation;
+        glm::vec3 position;
+        glm::vec3 scale;
+        float rotation;
 
-            [[nodiscard]] glm::mat4 model() const;
-        };
-
-        std::vector<Instance> instances;
-
-        [[nodiscard]] std::vector<glm::mat4> models();
+        [[nodiscard]] glm::mat4 model() const;
     };
 } // namespace caelus::core::components
 
