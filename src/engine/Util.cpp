@@ -33,7 +33,7 @@ namespace caelus::util {
     }
 #endif
 
-    std::string get_current_timestamp() {
+    std::string timestamp() {
         namespace ch = std::chrono;
 
         std::time_t time = ch::duration_cast<ch::seconds>(ch::system_clock::now().time_since_epoch()).count();

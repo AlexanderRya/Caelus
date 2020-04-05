@@ -14,7 +14,7 @@ namespace caelus::core {
         glfwSetErrorCallback([](const i32 code, const char* message) {
             util::print(util::format(
                 "[{}] [GLFW3] [Error: {}]: {}\n",
-                util::get_current_timestamp(),
+                util::timestamp(),
                 code,
                 message));
         });
@@ -102,5 +102,9 @@ namespace caelus::core {
 
     i32 Window::get_key(const i32 key) const {
         return glfwGetKey(window, key);
+    }
+
+    GLFWwindow* Window::handle() const {
+        return window;
     }
 } // namespace caelus::core

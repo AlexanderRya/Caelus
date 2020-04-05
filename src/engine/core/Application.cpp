@@ -1,3 +1,4 @@
+#include <engine/core/api/renderer/ImGuiContext.hpp>
 #include <engine/core/components/PointLight.hpp>
 #include <engine/core/components/Transform.hpp>
 #include <engine/core/components/Material.hpp>
@@ -8,7 +9,12 @@
 #include <engine/core/Application.hpp>
 #include <engine/core/Globals.hpp>
 
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_vulkan.h>
+
 #include <entt/entt.hpp>
+
 #include <GLFW/glfw3.h>
 
 #include <fstream>
@@ -17,7 +23,9 @@ namespace caelus::core {
     Application::Application()
     : window(1280, 720, "Caelus"),
       context(api::make_vulkan_context(&window)),
-      renderer(context) {}
+      renderer(context) {
+        api::make_imgui_context(context, window);
+    }
 
     void Application::load() {
         scene.layouts[meta::PipelineLayoutType::eMeshGeneric] = api::make_generic_pipeline_layout(context);
@@ -94,6 +102,10 @@ namespace caelus::core {
         renderer.init(scene);
 
         while (!window.should_close()) {
+            ImGui_ImplVulkan_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+
             const f32 frame_time = glfwGetTime();
             delta_time = frame_time - last_frame;
             last_frame = frame_time;
@@ -114,6 +126,7 @@ namespace caelus::core {
             renderer.acquire_frame();
 
             renderer.start(); {
+                ImGui::Render();
                 renderer.draw(scene);
             } renderer.end();
 

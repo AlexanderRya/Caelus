@@ -15,8 +15,8 @@ namespace caelus::core {
 
         Window(const Window&) = delete;
         Window& operator =(const Window&) = delete;
-        Window(Window&&) = delete;
-        Window& operator =(Window&&) = delete;
+        Window(Window&&) = default;
+        Window& operator =(Window&&) = default;
 
         [[nodiscard]] vk::SurfaceKHR create_surface(const api::VulkanContext&) const;
 
@@ -25,6 +25,7 @@ namespace caelus::core {
         void set_user_pointer(void*);
         [[nodiscard]] bool should_close() const;
         [[nodiscard]] i32 get_key(const i32) const;
+        [[nodiscard]] GLFWwindow* handle() const;
     };
 } // namespace caelus::core
 

@@ -26,7 +26,7 @@ namespace caelus::core::components {
     public:
         Camera() noexcept;
         void move(const Window&);
-        [[nodiscard]] glm::mat4 get_view_mat() const;
+        [[nodiscard]] glm::mat4 view() const;
         void process(double xoffset, double yoffset);
         void update();
     };

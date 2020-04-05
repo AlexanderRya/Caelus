@@ -41,7 +41,7 @@ namespace caelus::core::components {
         update();
     }
 
-    glm::mat4 Camera::get_view_mat() const {
+    glm::mat4 Camera::view() const {
         return glm::lookAt(cam_pos, cam_pos + cam_front, cam_up);
     }
 

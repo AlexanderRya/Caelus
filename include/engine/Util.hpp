@@ -66,7 +66,7 @@ namespace caelus::util {
         return oss << str.substr(start_idx, str.length()), oss.str();
     }
 
-    [[nodiscard]] std::string get_current_timestamp();
+    [[nodiscard]] std::string timestamp();
     void print(const std::string&);
     void print(const char*);
     void print(const void* addr);

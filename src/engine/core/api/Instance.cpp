@@ -60,7 +60,7 @@ namespace caelus::core::api {
 
         util::print(util::format(
             "[{}] [Vulkan] [{}/{}]: {}\n",
-            util::get_current_timestamp(),
+            util::timestamp(),
             get_message_severity(message_severity),
             get_message_type(message_type),
             callback_data->pMessage));

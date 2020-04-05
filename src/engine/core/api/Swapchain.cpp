@@ -25,12 +25,12 @@ namespace caelus::core::api {
 
             return capabilities.currentExtent;
         } else {
-            vk::Extent2D actual_extent{ static_cast<u32>(Window::width), static_cast<u32>(Window::height) };
+            vk::Extent2D extent{ static_cast<u32>(Window::width), static_cast<u32>(Window::height) };
 
-            actual_extent.width = std::clamp(actual_extent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
-            actual_extent.height = std::clamp(actual_extent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
+            extent.width = std::clamp(extent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
+            extent.height = std::clamp(extent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
 
-            return actual_extent;
+            return extent;
         }
     }
 

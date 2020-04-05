@@ -14,6 +14,9 @@
 #include <engine/Constants.hpp>
 #include <engine/Logger.hpp>
 
+#include <imgui.h>
+#include <imgui_impl_vulkan.h>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -131,7 +134,7 @@ namespace caelus::core::api {
 
         projection[1][1] *= -1;
 
-        auto proj_view = projection * camera.get_view_mat();
+        auto proj_view = projection * camera.view();
 
         camera_buffer[current_frame].write(&proj_view, 1);
     }
@@ -252,6 +255,8 @@ namespace caelus::core::api {
             command_buffer.pushConstants(scene.layouts[meta::PipelineLayoutType::eMeshGeneric].pipeline, vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment, 0u, 2 * sizeof(i32), indices, ctx.dispatcher);
             command_buffer.draw(mesh.vertex_count, 1, 0, 0, ctx.dispatcher);
         }
+
+        ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), command_buffer);
     }
 
     void Renderer::end() {

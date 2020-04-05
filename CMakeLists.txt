@@ -11,8 +11,10 @@ include_directories(Caelus
         include
         external/stb
         external/glm
+        external/imgui
         external/entt/src
         external/glfw/include
+        external/imgui/examples
         external/VulkanMemoryAllocator/src
         ${Vulkan_INCLUDE_DIRS})
 
@@ -30,6 +32,18 @@ elseif (UNIX)
     set(CMAKE_CXX_STANDARD 20)
 endif()
 
+set(IMGUI_HEADERS
+        external/imgui/imgui.h
+        external/imgui/examples/imgui_impl_glfw.h
+        external/imgui/examples/imgui_impl_vulkan.h)
+
+set(IMGUI_SOURCES
+        external/imgui/imgui.cpp
+        external/imgui/imgui_draw.cpp
+        external/imgui/imgui_widgets.cpp
+        external/imgui/examples/imgui_impl_glfw.cpp
+        external/imgui/examples/imgui_impl_vulkan.cpp)
+
 set(STB_HEADERS
         external/stb/stb.h
         external/stb/stb_image.h)
@@ -43,6 +57,7 @@ set(VMA_HEADERS
 set(CAELUS_HEADERS
         ${STB_HEADERS}
         ${VMA_HEADERS}
+        ${IMGUI_HEADERS}
         include/engine/Logger.hpp
         include/engine/Util.hpp
         include/engine/Types.hpp
@@ -73,10 +88,11 @@ set(CAELUS_HEADERS
         include/engine/core/api/renderer/Scene.hpp
         include/engine/core/components/Transform.hpp
         include/engine/core/components/Material.hpp
-        include/engine/core/components/Camera.hpp)
+        include/engine/core/components/Camera.hpp include/engine/core/api/renderer/ImGuiContext.hpp include/engine/core/Editor.hpp)
 
 set(CAELUS_SOURCES
         ${STB_SOURCES}
+        ${IMGUI_SOURCES}
         src/main.cpp
         src/engine/Util.cpp
         src/engine/core/Window.cpp
@@ -103,14 +119,14 @@ set(CAELUS_SOURCES
         src/engine/core/components/Mesh.cpp
         src/engine/core/Globals.cpp
         src/engine/core/components/Transform.cpp
-        src/engine/core/components/Camera.cpp)
+        src/engine/core/components/Camera.cpp src/engine/core/api/renderer/ImGuiContext.cpp src/engine/core/Editor.cpp)
 
 add_executable(Caelus
         ${CAELUS_HEADERS}
         ${CAELUS_SOURCES})
 
 if (UNIX)
-    target_compile_options(Caelus PRIVATE -std=c++20 -O3 -pedantic -pedantic-errors -m64 -Wall -Wextra -Werror -Wno-c99-extensions -Wno-shadow)
+    target_compile_options(Caelus PRIVATE -std=c++20 -O3 -pedantic -pedantic-errors -m64 -Wall -Wextra -Werror -Wno-c99-extensions -Wno-shadow -Wno-deprecated-declarations)
 endif()
 
 if (WIN32)
