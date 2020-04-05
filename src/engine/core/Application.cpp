@@ -91,7 +91,7 @@ namespace caelus::core {
             });
         }
 
-        renderer.build(scene);
+        renderer.init(scene);
 
         while (!window.should_close()) {
             const f32 frame_time = glfwGetTime();
@@ -109,6 +109,8 @@ namespace caelus::core {
             window.poll_events();
 
             // Render
+            renderer.build(scene);
+
             renderer.acquire_frame();
 
             renderer.start(); {

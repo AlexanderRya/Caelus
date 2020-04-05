@@ -1,8 +1,9 @@
 #ifndef CAELUS_RENDERER_HPP
 #define CAELUS_RENDERER_HPP
 
-#include <engine/core/api/renderer/Scene.hpp>
 #include <engine/core/components/Transform.hpp>
+#include <engine/core/components/Material.hpp>
+#include <engine/core/api/renderer/Scene.hpp>
 #include <engine/core/components/Texture.hpp>
 #include <engine/core/api/DescriptorSet.hpp>
 #include <engine/core/api/MappedBuffer.hpp>
@@ -21,12 +22,8 @@ namespace caelus::core::api {
     class Renderer {
         struct DrawCommand {
             const components::Mesh* mesh{};
-            const components::Material* material{};
-            usize transform_id{};
-
-            api::DescriptorSet descriptor_set{};
-            api::MappedBuffer instance_buffer{};
-            api::MappedBuffer material_buffer{};
+            i32 material_idx{};
+            i32 transform_idx{};
         };
 
         std::vector<vk::Semaphore> image_available;
@@ -39,20 +36,27 @@ namespace caelus::core::api {
 
         // Drawing stuff
         std::vector<api::Buffer> vertex_buffers;
+        std::vector<glm::mat4> transforms;
+        std::vector<components::Material::Instance> materials;
         std::vector<DrawCommand> draw_commands;
-        std::unordered_map<usize, std::vector<glm::mat4>> transform_data;
+
+        api::DescriptorSet descriptor_set{};
+        api::MappedBuffer instance_buffer{};
+        api::MappedBuffer material_buffer{};
+        api::MappedBuffer camera_buffer{};
 
         u32 image_index{};
         u32 current_frame{};
 
-        void update_camera(Scene&);
-        void update_transforms(DrawCommand&);
-        void update_materials(DrawCommand&);
+        void update_camera();
+        void update_transforms();
+        void update_materials();
     public:
         static inline u32 frames_rendered{};
 
         explicit Renderer(const VulkanContext&);
 
+        void init(Scene&);
         void build(Scene&);
 
         // Drawing

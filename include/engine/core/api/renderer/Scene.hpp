@@ -19,8 +19,6 @@ namespace caelus::core::api {
 
         std::vector<entt::entity> entities{};
         entt::registry registry{};
-
-        api::MappedBuffer camera_buffer{};
     };
 } // namespace caelus::core::api
 

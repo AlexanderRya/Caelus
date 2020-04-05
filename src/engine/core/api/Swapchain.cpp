@@ -40,7 +40,7 @@ namespace caelus::core::api {
         vk::SurfaceFormatKHR format = surface_formats[0];
 
         for (const auto& each : surface_formats) {
-            if (each.format == vk::Format::eB8G8R8A8Srgb &&
+            if (each.format == vk::Format::eB8G8R8A8Unorm &&
                 each.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) {
 
                 logger::info("Swapchain details: format: vk::Format::", vk::to_string(each.format));

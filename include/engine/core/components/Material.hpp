@@ -14,6 +14,7 @@ namespace caelus::core::components {
             glm::vec4 color{};
             i32 texture_idx{};
         } instance{};
+
         vk::Pipeline pipeline{};
     };
 } // namespace caelus::core::components

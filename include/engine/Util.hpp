@@ -75,6 +75,7 @@ namespace caelus::util {
         print(std::to_string(val));
     }
 
+    // Credits to martty and pengu
     template <typename Ty>
     static inline void hash_combine(usize& seed, const Ty& v) {
         std::hash<Ty> hasher{};

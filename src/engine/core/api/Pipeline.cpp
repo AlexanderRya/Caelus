@@ -43,7 +43,7 @@ namespace caelus::core::api {
             layout_bindings[1].stageFlags = vk::ShaderStageFlagBits::eVertex;
 
             layout_bindings[2].descriptorCount = 1;
-            layout_bindings[2].descriptorType = vk::DescriptorType::eUniformBuffer;
+            layout_bindings[2].descriptorType = vk::DescriptorType::eStorageBuffer;
             layout_bindings[2].binding = static_cast<u32>(meta::PipelineBinding::eMaterial);
             layout_bindings[2].stageFlags = vk::ShaderStageFlagBits::eFragment;
 
@@ -73,11 +73,17 @@ namespace caelus::core::api {
 
         layout.set = ctx.device.logical.createDescriptorSetLayout(set_layout_create_info, nullptr, ctx.dispatcher);
 
+        vk::PushConstantRange range{}; {
+            range.size = 2 * sizeof(i32);
+            range.stageFlags = vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment;
+            range.offset = 0;
+        }
+
         vk::PipelineLayoutCreateInfo layout_create_info{}; {
             layout_create_info.setLayoutCount = 1;
             layout_create_info.pSetLayouts = &layout.set;
-            layout_create_info.pushConstantRangeCount = 0;
-            layout_create_info.pPushConstantRanges = nullptr;
+            layout_create_info.pushConstantRangeCount = 1;
+            layout_create_info.pPushConstantRanges = &range;
         }
 
         layout.pipeline = ctx.device.logical.createPipelineLayout(layout_create_info, nullptr, ctx.dispatcher);

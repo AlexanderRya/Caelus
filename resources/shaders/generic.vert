@@ -11,12 +11,17 @@ layout (set = 0, binding = 0) uniform Camera {
     mat4 pv_mat;
 } camera;
 
-layout (std430, set = 0, binding = 1) buffer readonly InstanceBuf {
-    mat4 instances[];
+layout (std430, set = 0, binding = 1) buffer readonly Transforms {
+    mat4 transforms[];
+};
+
+layout (push_constant) uniform Indices {
+    int transform_idx;
+    int material_idx;
 };
 
 void main() {
-    gl_Position = camera.pv_mat * instances[gl_InstanceIndex] * vec4(ivertex_pos, 1.0);
+    gl_Position = camera.pv_mat * transforms[transform_idx] * vec4(ivertex_pos, 1.0);
     normals = inormals;
     uvs = iuvs;
 }
