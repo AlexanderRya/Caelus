@@ -47,22 +47,13 @@ namespace caelus::util {
 #if defined(__x86_64__)
 #if defined(__clang__)
     [[clang::optnone]]
-#else
+#elif defined(__GNUG__)
     [[gnu::optimize("O0")]]
 #endif
     void print(const std::string& val) {
 #if defined(__linux__)
-        __asm volatile(
-        "push    %0\n"
-        "push    %1\n"
-        "movq    $1, %%rax\n"
-        "movq    $1, %%rdi\n"
-        "pop     %%rdx\n"
-        "pop     %%rsi\n"
-        "syscall"
-        ::"r"(val.c_str()), "r"(val.size()));
+        write(1, val.c_str(), val.size());
 #else
-    #warning Turn around
         auto stdout_handle = GetStdHandle(STD_OUTPUT_HANDLE);
         WriteFile(stdout_handle, val.c_str(), val.size(), nullptr, false);
 #endif
@@ -82,3 +73,16 @@ namespace caelus::util {
     }
 #endif
 } // namespace caelus::util
+
+namespace std {
+    template <>
+    struct hash<glm::vec4> {
+        caelus::usize operator ()(const glm::vec4& v) const noexcept {
+            caelus::usize id{};
+
+            caelus::util::hash_combine(id, v.x, v.y, v.z, v.w);
+
+            return id;
+        }
+    };
+} // namespace std

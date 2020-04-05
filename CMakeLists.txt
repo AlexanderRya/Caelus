@@ -110,7 +110,7 @@ add_executable(Caelus
         ${CAELUS_SOURCES})
 
 if (UNIX)
-    target_compile_options(Caelus PRIVATE -std=c++20 -O3 -pedantic -pedantic-errors -m64 -Wall -Wextra -Werror -Wno-c99-extensions -Wno-shadow -Wno-deprecated-declarations)
+    target_compile_options(Caelus PRIVATE -std=c++20 -O3 -pedantic -pedantic-errors -m64 -Wall -Wextra -Werror -Wno-c99-extensions -Wno-shadow)
 endif()
 
 if (WIN32)

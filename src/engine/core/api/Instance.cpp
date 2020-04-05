@@ -102,7 +102,7 @@ namespace caelus::core::api {
     vk::Instance make_instance(const VulkanContext& ctx) {
         vk::ApplicationInfo application_info{}; {
             application_info.apiVersion = VK_API_VERSION_1_2;
-            application_info.applicationVersion = VK_API_VERSION_1_2;
+            application_info.applicationVersion = CAELUS_MAKE_VERSION(0u, 1u, 0u);
             application_info.engineVersion = CAELUS_MAKE_VERSION(0u, 1u, 0u);
             application_info.pEngineName = "Caelus";
             application_info.pApplicationName = "Caelus";

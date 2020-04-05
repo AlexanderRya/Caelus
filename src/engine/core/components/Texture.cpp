@@ -50,7 +50,7 @@ namespace caelus::core::components {
             create_info.height = height;
             create_info.memory_usage = VmaMemoryUsage::VMA_MEMORY_USAGE_GPU_ONLY;
             create_info.usage_flags = vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled;
-            create_info.format = vk::Format::eR8G8B8A8Srgb;
+            create_info.format = vk::Format::eR8G8B8A8Unorm;
             create_info.tiling = vk::ImageTiling::eOptimal;
             create_info.ctx = &ctx;
         }
@@ -65,7 +65,7 @@ namespace caelus::core::components {
             ctx, image.handle,
             vk::ImageLayout::eTransferDstOptimal, vk::ImageLayout::eShaderReadOnlyOptimal);
 
-        image_view = api::make_image_view(ctx, image.handle, vk::Format::eR8G8B8A8Srgb, vk::ImageAspectFlagBits::eColor);
+        image_view = api::make_image_view(ctx, image.handle, vk::Format::eR8G8B8A8Unorm, vk::ImageAspectFlagBits::eColor);
 
         logger::info("Successfully loaded texture, "
                      "width: ", width,

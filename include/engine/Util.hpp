@@ -14,6 +14,7 @@
     #include <libloaderapi.h>
 #elif __linux__
     #include <dlfcn.h>
+    #include <unistd.h>
 #endif
 
 #define CAELUS_MAKE_VERSION(major, minor, patch) (((major) << 22u) | ((minor) << 12u) | (patch))
@@ -89,18 +90,5 @@ namespace caelus::util {
         (hash_combine(seed, rest), ...);
     }
 } // namespace caelus::util
-
-namespace std {
-    template <>
-    struct hash<glm::vec4> {
-        caelus::usize operator ()(const glm::vec4& v) const noexcept {
-            caelus::usize id{};
-
-            caelus::util::hash_combine(id, v.x, v.y, v.z, v.w);
-
-            return id;
-        }
-    };
-} // namespace std
 
 #endif //CAELUS_UTIL_HPP

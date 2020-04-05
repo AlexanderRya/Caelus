@@ -111,15 +111,14 @@ namespace caelus::core::api {
         for (auto& entity : mesh_view) {
             auto [mesh, transform, material] = mesh_view.get<components::Mesh, components::Transform, components::Material>(entity);
 
-            DrawCommand command{
+            draw_commands.emplace_back( DrawCommand{
                 .mesh = &mesh,
                 .material_idx = static_cast<i32>(materials.size()),
                 .transform_idx = static_cast<i32>(transforms.size())
-            };
+            });
 
             transforms.emplace_back(transform.model());
             materials.emplace_back(material.instance);
-            draw_commands.emplace_back(command);
         }
     }
 

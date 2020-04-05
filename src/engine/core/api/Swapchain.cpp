@@ -20,12 +20,12 @@ namespace caelus::core::api {
         return count;
     }
 
-    [[nodiscard]] static inline vk::Extent2D get_extent(const Window* window, const vk::SurfaceCapabilitiesKHR& capabilities) {
+    [[nodiscard]] static inline vk::Extent2D get_extent(const vk::SurfaceCapabilitiesKHR& capabilities) {
         if (capabilities.currentExtent.width != UINT32_MAX) {
 
             return capabilities.currentExtent;
         } else {
-            vk::Extent2D actual_extent{ static_cast<u32>(window->width), static_cast<u32>(window->height) };
+            vk::Extent2D actual_extent{ static_cast<u32>(Window::width), static_cast<u32>(Window::height) };
 
             actual_extent.width = std::clamp(actual_extent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
             actual_extent.height = std::clamp(actual_extent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
@@ -121,13 +121,13 @@ namespace caelus::core::api {
         api::transition_image_layout(ctx, swapchain.depth_image.handle, vk::ImageLayout::eUndefined, vk::ImageLayout::eDepthStencilAttachmentOptimal);
     }
 
-    Swapchain make_swapchain(const Window* window, const VulkanContext& ctx) {
+    Swapchain make_swapchain(const VulkanContext& ctx) {
         auto capabilities = ctx.device.physical.getSurfaceCapabilitiesKHR(ctx.surface, ctx.dispatcher);
 
         Swapchain swapchain{};
 
         swapchain.image_count = get_image_count(capabilities);
-        swapchain.extent = get_extent(window, capabilities);
+        swapchain.extent = get_extent(capabilities);
         swapchain.format = get_format(ctx);
         swapchain.present_mode = get_present_mode(ctx);
 

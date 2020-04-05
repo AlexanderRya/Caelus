@@ -4,7 +4,7 @@
 #include <engine/Forwards.hpp>
 
 namespace caelus::core::api {
-    [[nodiscard]] Swapchain make_swapchain(const Window*, const VulkanContext&);
+    [[nodiscard]] Swapchain make_swapchain(const VulkanContext&);
 } // namespace caelus::core::api
 
 #endif //CAELUS_SWAPCHAIN_HPP
