@@ -21,7 +21,7 @@ namespace caelus::core::api {
 
         void create(const CreateInfo&);
 
-        [[nodiscard]] std::vector<vk::DescriptorBufferInfo> get_info() const;
+        [[nodiscard]] std::vector<vk::DescriptorBufferInfo> info() const;
 
         [[nodiscard]] SingleMappedBuffer& operator [](const usize);
     };

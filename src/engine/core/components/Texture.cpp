@@ -73,7 +73,7 @@ namespace caelus::core::components {
                      ", channels: ", channels);
     }
 
-    vk::DescriptorImageInfo Texture::get_info() const {
+    vk::DescriptorImageInfo Texture::info() const {
         vk::DescriptorImageInfo info{}; {
             info.sampler = sampler;
             info.imageView = image_view;

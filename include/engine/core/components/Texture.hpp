@@ -20,7 +20,7 @@ namespace caelus::core::components {
 
         void load(const std::filesystem::path&);
 
-        [[nodiscard]] vk::DescriptorImageInfo get_info() const;
+        [[nodiscard]] vk::DescriptorImageInfo info() const;
     };
 } // namespace caelus::core::components
 

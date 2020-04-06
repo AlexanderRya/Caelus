@@ -105,6 +105,7 @@ namespace caelus::core {
             ImGui_ImplVulkan_NewFrame();
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
+            ImGui::Render();
 
             const f32 frame_time = glfwGetTime();
             delta_time = frame_time - last_frame;
@@ -126,11 +127,13 @@ namespace caelus::core {
             renderer.acquire_frame();
 
             renderer.start(); {
-                ImGui::Render();
                 renderer.draw(scene);
             } renderer.end();
 
             renderer.submit();
+
+
+            ImGui::EndFrame();
         }
     }
 

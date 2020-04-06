@@ -77,22 +77,22 @@ namespace caelus::core::api {
 
         api::DescriptorSet::WriteImageInfo write_image_info{}; {
             write_image_info.image_info = {
-                scene.textures[0].get_info()
+                scene.textures[0].info()
             };
             write_image_info.binding = static_cast<u32>(meta::PipelineBinding::eTexture);
             write_image_info.type = vk::DescriptorType::eCombinedImageSampler;
         }
 
         std::vector<api::DescriptorSet::WriteBufferInfo> write_buffer_info(3); {
-            write_buffer_info[0].buffer_info = camera_buffer.get_info();
+            write_buffer_info[0].buffer_info = camera_buffer.info();
             write_buffer_info[0].binding = static_cast<u32>(meta::PipelineBinding::eCamera);
             write_buffer_info[0].type = vk::DescriptorType::eUniformBuffer;
 
-            write_buffer_info[1].buffer_info = instance_buffer.get_info();
+            write_buffer_info[1].buffer_info = instance_buffer.info();
             write_buffer_info[1].binding = static_cast<u32>(meta::PipelineBinding::eInstance);
             write_buffer_info[1].type = vk::DescriptorType::eStorageBuffer;
 
-            write_buffer_info[2].buffer_info = material_buffer.get_info();
+            write_buffer_info[2].buffer_info = material_buffer.info();
             write_buffer_info[2].binding = static_cast<u32>(meta::PipelineBinding::eMaterial);
             write_buffer_info[2].type = vk::DescriptorType::eStorageBuffer;
         }

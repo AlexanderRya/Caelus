@@ -67,7 +67,7 @@ namespace caelus::core::api {
         logger::info("Created mapped buffer with size (in bytes): ", create_info.type_size);
     }
 
-    std::vector<vk::DescriptorBufferInfo> MappedBuffer::get_info() const {
+    std::vector<vk::DescriptorBufferInfo> MappedBuffer::info() const {
         std::vector<vk::DescriptorBufferInfo> info{};
         info.reserve(meta::frames_in_flight);
 
